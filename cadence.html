@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadence — Your AI Content Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,800;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F2;
+  --white: #FFFFFF;
+  --surface2: #F2F0ED;
+  --border: #E8E4DF;
+  --border2: #D0CBC3;
+  --text: #1A1714;
+  --muted: #7A746C;
+  --faint: #B0AA9F;
+  --accent: #FF5C35;
+  --accent-light: #FFF0EC;
+  --accent-mid: rgba(255,92,53,0.15);
+  --violet: #7C4DFF;
+  --violet-light: #F0EBFF;
+  --teal: #0EA47A;
+  --teal-light: #E6FAF4;
+  --amber: #D97706;
+  --amber-light: #FFFBEB;
+  --green: #16A34A;
+  --green-light: #F0FDF4;
+  --li-blue: #0A66C2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+
+/* ── LOGO ── */
+.logo-wrap { display: flex; align-items: center; gap: 9px; }
+.logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-icon svg { width: 17px; height: 17px; }
+.logo-text { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; line-height: 1; }
+.logo-text em { font-style: italic; color: var(--accent); }
+
+/* ── SPLASH ── */
+#splash { display: flex; min-height: 100vh; background: var(--white); }
+.splash-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4rem 5%; max-width: 580px; }
+.splash-right { flex: 1; background: linear-gradient(135deg, #FFF4F0 0%, #F3EEFF 50%, #E8F9F4 100%); display: flex; align-items: center; justify-content: center; padding: 3rem; position: relative; overflow: hidden; }
+.splash-right::before { content:''; position:absolute; width:400px; height:400px; background:radial-gradient(circle, rgba(255,92,53,0.07) 0%, transparent 70%); top:-80px; right:-80px; border-radius:50%; }
+.splash-eyebrow { display: inline-flex; align-items: center; gap: 7px; background: var(--accent-light); color: var(--accent); border: 1px solid rgba(255,92,53,0.2); border-radius: 100px; padding: 5px 14px; font-size: 12px; font-weight: 700; margin-bottom: 1.75rem; letter-spacing: 0.3px; }
+.splash-eyebrow-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; animation: breathe 2s ease-in-out infinite; }
+@keyframes breathe { 0%,100%{opacity:1} 50%{opacity:0.3} }
+#splash h1 { font-family: 'Fraunces', serif; font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 1.1rem; color: var(--text); }
+#splash h1 em { font-style: italic; color: var(--accent); }
+.splash-sub { font-size: 16px; color: var(--muted); max-width: 400px; margin-bottom: 0.6rem; line-height: 1.65; }
+.splash-proof-line { font-size: 13px; color: var(--faint); margin-bottom: 2rem; }
+.splash-proof-line strong { color: var(--text); }
+.splash-btns { display: flex; gap: 10px; margin-bottom: 1.75rem; }
+.splash-social { display: flex; align-items: center; gap: 10px; }
+.splash-avatars { display: flex; }
+.splash-avatars span { width:26px; height:26px; border-radius:50%; border:2px solid var(--white); margin-left:-6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; flex-shrink:0; }
+.splash-avatars span:first-child { margin-left:0; }
+.splash-social-text { font-size:12px; color:var(--muted); }
+.splash-social-text strong { color:var(--text); }
+/* preview card */
+.splash-card { background:var(--white); border-radius:18px; box-shadow:0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06); padding:1.5rem; max-width:320px; width:100%; position:relative; z-index:1; }
+.sc-badge { position:absolute; top:-12px; right:18px; background:var(--accent); color:white; border-radius:100px; padding:4px 12px; font-size:11px; font-weight:700; box-shadow:0 2px 8px rgba(255,92,53,0.4); }
+.sc-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.sc-user { display:flex; align-items:center; gap:9px; }
+.sc-avatar { width:36px; height:36px; background:linear-gradient(135deg,var(--accent),#FF8C5A); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:14px; font-weight:700; }
+.sc-name { font-size:13px; font-weight:700; }
+.sc-role { font-size:11px; color:var(--muted); }
+.sc-li { background:#EBF4FF; color:var(--li-blue); border-radius:5px; padding:3px 8px; font-size:11px; font-weight:700; }
+.sc-body { font-size:13px; line-height:1.7; color:var(--text); margin-bottom:1rem; }
+.sc-actions { display:flex; gap:7px; }
+.sc-btn { flex:1; padding:8px; border-radius:8px; border:1.5px solid; font-size:12px; font-weight:700; text-align:center; }
+.sc-btn.approve { color:#16A34A; border-color:rgba(22,163,74,0.3); background:#F0FDF4; }
+.sc-btn.edit { color:var(--muted); border-color:var(--border2); background:var(--white); }
+.sc-btn.regen { color:var(--accent); border-color:rgba(255,92,53,0.25); background:var(--accent-light); }
+.splash-note { margin-top: 1.75rem; font-size: 12px; color: var(--faint); }
+.btn-primary { background: var(--accent); color: #fff; border: none; padding: 12px 26px; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.15s, opacity 0.15s; white-space: nowrap; box-shadow: 0 2px 8px rgba(255,92,53,0.3); }
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--border2); padding: 11px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+/* ── ONBOARDING ── */
+#onboarding { display: none; min-height: 100vh; background: var(--white); max-width: 580px; margin: 0 auto; padding: 3rem 2rem; }
+.ob-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; }
+.ob-step-pill { background: var(--surface2); border-radius: 100px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: var(--muted); font-family: 'DM Mono', monospace; }
+.progress-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 2.75rem; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+.step-content { display: none; }
+.step-content.active { display: block; }
+.step-eyebrow { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.5rem; }
+.step-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.6rem; line-height: 1.15; }
+.step-sub { font-size: 14px; color: var(--muted); margin-bottom: 2.25rem; line-height: 1.65; }
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+input[type="text"], select, textarea { width: 100%; padding: 10px 13px; background: var(--white); border: 1.5px solid var(--border2); border-radius: 9px; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; transition: border-color 0.15s; appearance: none; }
+input[type="text"]:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-mid); }
+textarea { resize: vertical; min-height: 80px; }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' fill='none'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%237A746C' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 38px; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { padding: 6px 14px; border-radius: 100px; border: 1.5px solid var(--border2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; user-select: none; background: var(--white); color: var(--muted); }
+.chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.chip.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.step-nav { display: flex; gap: 10px; margin-top: 2.25rem; }
+.btn-back { background: var(--surface2); color: var(--muted); border: 1.5px solid var(--border); padding: 11px 22px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn-back:hover { color: var(--text); border-color: var(--border2); }
+.btn-next { flex: 1; }
+.test-post-card { background: var(--white); border: 1.5px solid var(--border2); border-radius: 13px; padding: 1.1rem; margin-bottom: 9px; cursor: pointer; transition: all 0.2s; }
+.test-post-card:hover { border-color: var(--accent); background: var(--accent-light); }
+.test-post-card.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-mid); }
+.platform-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--surface2); border-radius: 5px; padding: 3px 8px; font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
+.post-body { font-size: 13px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+.generating { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; padding: 1.5rem 0; }
+.dot-anim { display: flex; gap: 4px; }
+.dot-anim span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
+.dot-anim span:nth-child(2) { animation-delay: 0.2s; }
+.dot-anim span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+/* ── DASHBOARD ── */
+#dashboard { display: none; min-height: 100vh; }
+
+.dash-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 210px; background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 20; box-shadow: 1px 0 8px rgba(0,0,0,0.04); }
+.sidebar-logo { padding: 1.25rem 1.1rem 1rem; border-bottom: 1px solid var(--border); }
+.nav-group { border-bottom: 1px solid var(--border); padding: 0.35rem 0; }
+.nav-group:last-of-type { border-bottom: none; flex:1; }
+.nav-section { font-size: 10px; font-weight: 700; color: var(--faint); letter-spacing: 1.5px; text-transform: uppercase; padding: 0.6rem 1.1rem 0.2rem; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 1.1rem; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.13s; border-left: 3px solid transparent; margin: 1px 0; }
+.nav-item:hover { color: var(--text); background: var(--bg); }
+.nav-item.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 700; }
+.nav-item svg { width: 17px; height: 17px; flex-shrink: 0; }
+.nav-badge { margin-left:auto; background:var(--accent); color:white; border-radius:100px; padding:1px 7px; font-size:10px; font-weight:700; }
+.sidebar-bottom { margin-top: auto; padding: 1rem 1.1rem; border-top: 1px solid var(--border); }
+.upgrade-nudge { background: var(--accent-light); border: 1px solid rgba(255,92,53,0.2); border-radius: 9px; padding: 10px 12px; margin-bottom: 12px; }
+.upgrade-nudge p { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+.upgrade-nudge button { width: 100%; background: var(--accent); color: white; border: none; border-radius: 7px; padding: 7px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: opacity 0.15s; }
+.upgrade-nudge button:hover { opacity: 0.88; }
+.user-row { display: flex; align-items: center; gap: 9px; }
+.avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.user-name-sm { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-plan-sm { font-size: 11px; color: var(--faint); }
+
+.dash-main { margin-left: 210px; }
+.dash-topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0.8rem 1.75rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+.greeting-text { font-size: 15px; font-weight: 700; }
+.greeting-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 9px; }
+.streak-pill { display: flex; align-items: center; gap: 6px; background: var(--amber-light); border: 1.5px solid rgba(217,119,6,0.2); border-radius: 100px; padding: 5px 12px; font-size: 13px; font-weight: 700; color: var(--amber); }
+.notif-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); transition: all 0.13s; position: relative; }
+.notif-btn:hover { color: var(--text); background: var(--border); }
+.notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: var(--accent); border-radius: 50%; border: 2px solid var(--white); }
+
+.dash-grid { display: grid; grid-template-columns: 1fr 250px 268px; min-height: calc(100vh - 56px); }
+.dash-col { padding: 1.5rem 1.25rem; border-right: 1px solid var(--border); overflow: visible; }
+.dash-col:last-child { border-right: none; }
+.col-label { font-size: 10px; font-weight: 700; color: var(--faint); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 1.1rem; }
+
+/* post card */
+.post-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.post-card-top { padding: 1rem 1rem 0; display: flex; align-items: center; justify-content: space-between; }
+.li-badge { display: inline-flex; align-items: center; gap: 5px; background: #EBF4FF; border-radius: 5px; padding: 3px 8px; font-size: 11px; font-weight: 700; color: var(--li-blue); }
+.post-style-label { font-size: 11px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: 0.5px; }
+.post-card-body { padding: 0.9rem 1rem; font-size: 13px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+.post-card-actions { display: flex; gap: 7px; padding: 0 1rem 1rem; }
+.act-btn { flex: 1; padding: 9px 6px; border-radius: 8px; border: 1.5px solid var(--border2); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.13s; background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif; }
+.act-approve { color: white; background: var(--green); border-color: var(--green); box-shadow: 0 2px 6px rgba(22,163,74,0.3); }
+.act-approve:hover { background: #15803D; border-color: #15803D; box-shadow: 0 3px 10px rgba(22,163,74,0.4); transform: translateY(-1px); }
+.act-edit { color: var(--text); }
+.act-edit:hover { background: var(--surface2); }
+.act-regen { color: var(--accent); border-color: rgba(255,92,53,0.35); }
+.act-regen:hover { background: var(--accent-light); border-color: var(--accent); }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.stat-tile { background: var(--white); border: 1px solid var(--border); border-radius: 11px; padding: 13px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.stat-tile-label { font-size: 11px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.stat-tile-val { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 800; color: var(--text); line-height: 1; }
+.stat-tile-val.accent { color: var(--accent); }
+.stat-tile-val.green { color: var(--green); }
+.stat-tile-val.sm { font-size: 16px; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; margin-top: 2px; }
+.stat-tile-sub { font-size: 11px; color: var(--faint); margin-top: 3px; }
+
+/* calendar */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+.cal-month-label { font-size: 13px; font-weight: 700; }
+.cal-arrow { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; transition: all 0.13s; line-height: 1; }
+.cal-arrow:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-dow { font-size: 10px; font-weight: 600; color: var(--faint); text-align: center; padding: 3px 0; }
+.cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.13s; }
+.cal-day:hover:not(.empty) { background: var(--surface2); }
+.cal-day.empty { color: var(--faint); cursor: default; pointer-events: none; }
+.cal-day.scheduled { background: var(--teal-light); color: var(--teal); font-weight: 700; }
+.cal-day.scheduled:hover { background: #CCF5EA; }
+.cal-day.today { background: var(--accent); color: white; font-weight: 800; border-radius: 50%; }
+.cal-day.today:hover { opacity: 0.88; }
+.cal-day.overdue { background: #FEE2E2; color: #DC2626; font-weight: 700; }
+.cal-day.selected-day { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.cal-popover { display: none; margin-top: 0.7rem; background: var(--white); border: 1.5px solid var(--border2); border-radius: 13px; overflow: visible; }
+.cal-popover.open { display: block; animation: fadeUp 0.15s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.cal-pop-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0.875rem 0; flex-wrap: wrap; gap: 4px; }
+.cal-pop-date { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px; }
+.cal-pop-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.cal-pop-tag { background: var(--surface2); border-radius: 5px; padding: 2px 7px; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+.cal-pop-tag.li { background: #EBF4FF; color: var(--li-blue); }
+.cal-pop-tag.x { background: #F3F3F3; color: #111; }
+.cal-pop-tag.overdue { background: #FEE2E2; color: #DC2626; }
+.cal-pop-body-text { padding: 0.6rem 0.875rem 0; font-size: 12.5px; line-height: 1.75; color: var(--text); white-space: pre-wrap; max-height: 130px; overflow-y: auto; }
+.cal-pop-empty { padding: 0.75rem 0.875rem 0.875rem; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.cal-pop-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0.7rem 0.875rem 0.875rem; border-top: 1px solid var(--border); margin-top: 0.7rem; }
+.cal-pop-btn { padding: 8px 6px; border-radius: 7px; border: 1.5px solid var(--border2); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.13s; background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif; white-space: nowrap; text-align: center; }
+.cal-pop-btn.approve { color: white; background: var(--green); border-color: var(--green); }
+.cal-pop-btn.approve:hover { background: #15803D; }
+.cal-pop-btn.approve.done { background: var(--green-light); color: var(--green); border-color: var(--green); }
+.cal-pop-btn.edit-btn { color: var(--text); }
+.cal-pop-btn.edit-btn:hover { background: var(--surface2); }
+.cal-pop-btn.regen { color: var(--accent); border-color: rgba(255,92,53,0.25); }
+.cal-pop-btn.regen:hover { background: var(--accent-light); border-color: var(--accent); }
+.cal-pop-btn.copy { color: var(--muted); }
+.cal-pop-btn.copy:hover { background: var(--surface2); color: var(--text); }
+.cal-pop-edit-area { display: block; width: calc(100% - 1.75rem); margin: 0 0.875rem; background: var(--surface2); border: 1.5px solid var(--accent); border-radius: 8px; padding: 0.7rem; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; line-height: 1.75; resize: vertical; min-height: 90px; }
+.cal-pop-edit-area:focus { outline: none; }
+
+.cal-pop-expand-btn { background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); transition: all 0.13s; flex-shrink: 0; }
+.cal-pop-expand-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+/* ── POST MODAL ── */
+.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(20,16,12,0.55); backdrop-filter: blur(3px); z-index: 100; align-items: center; justify-content: center; padding: 2rem; }
+.modal-backdrop.open { display: flex; animation: backdropIn 0.2s ease; }
+@keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-card { background: var(--white); border-radius: 18px; width: 100%; max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.1); animation: modalIn 0.2s ease; overflow: hidden; }
+@keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.modal-header-left { display: flex; align-items: center; gap: 8px; }
+.modal-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+.modal-close { width: 30px; height: 30px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); font-size: 16px; transition: all 0.13s; line-height: 1; }
+.modal-close:hover { background: var(--border); color: var(--text); }
+.modal-body { flex: 1; overflow-y: auto; padding: 1.25rem; }
+.modal-post-text { font-size: 15px; line-height: 1.85; color: var(--text); white-space: pre-wrap; margin-bottom: 1.25rem; }
+.modal-edit-area { width: 100%; background: var(--surface2); border: 1.5px solid var(--accent); border-radius: 10px; padding: 0.9rem; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; line-height: 1.85; resize: vertical; min-height: 200px; box-shadow: 0 0 0 3px var(--accent-mid); }
+.modal-edit-area:focus { outline: none; }
+.modal-approved-state { text-align: center; padding: 1.5rem; }
+.modal-approved-state h3 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 800; color: var(--green); margin-bottom: 0.4rem; }
+.modal-approved-state p { font-size: 14px; color: #15803D; margin-bottom: 1.25rem; }
+.modal-footer { display: flex; gap: 8px; padding: 1rem 1.25rem; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
+.modal-btn { flex: 1; padding: 11px 8px; border-radius: 9px; border: 1.5px solid var(--border2); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif; }
+.modal-btn.approve { color: white; background: var(--green); border-color: var(--green); box-shadow: 0 2px 8px rgba(22,163,74,0.25); }
+.modal-btn.approve:hover { background: #15803D; transform: translateY(-1px); }
+.modal-btn.edit { color: var(--text); }
+.modal-btn.edit:hover { background: var(--surface2); }
+.modal-btn.regen { color: var(--accent); border-color: rgba(255,92,53,0.3); }
+.modal-btn.regen:hover { background: var(--accent-light); border-color: var(--accent); }
+.modal-btn.copy { color: var(--muted); }
+.modal-btn.copy:hover { background: var(--surface2); color: var(--text); }
+
+.insight-bar { margin-top: 1.1rem; background: var(--violet-light); border: 1px solid rgba(124,77,255,0.15); border-left: 3px solid var(--violet); border-radius: 9px; padding: 11px 12px; font-size: 12px; color: #4C3799; line-height: 1.6; }
+
+/* ── SHARED PAGE CHROME ── */
+.page-topbar { display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:56px; z-index:9; flex-wrap:wrap; gap:10px; }
+.page-title { font-family:'Fraunces',serif; font-size:20px; font-weight:800; letter-spacing:-0.5px; }
+.page-sub { font-size:12px; color:var(--muted); margin-top:1px; }
+.page-action-btn { background:var(--accent); color:white; border:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; transition:all 0.15s; }
+.page-action-btn:hover { opacity:0.88; transform:translateY(-1px); }
+.filter-chip-group { display:flex; gap:6px; flex-wrap:wrap; }
+.filter-chip { padding:5px 12px; border-radius:100px; border:1.5px solid var(--border2); font-size:12px; font-weight:600; cursor:pointer; transition:all 0.13s; color:var(--muted); background:var(--white); user-select:none; }
+.filter-chip:hover { border-color:var(--accent); color:var(--accent); }
+.filter-chip.active { background:var(--accent-light); border-color:var(--accent); color:var(--accent); }
+
+/* ── SHARED PAGE CHROME ── */
+.page-topbar { display:flex; align-items:center; justify-content:space-between; padding:0.875rem 2rem; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:9; flex-wrap:wrap; gap:10px; }
+.page-title { font-family:'Fraunces',serif; font-size:20px; font-weight:800; letter-spacing:-0.5px; }
+.page-sub { font-size:12px; color:var(--muted); margin-top:1px; }
+.page-action-btn { background:var(--accent); color:white; border:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; transition:all 0.15s; }
+.page-action-btn:hover { opacity:0.88; transform:translateY(-1px); }
+.filter-chip-group { display:flex; gap:6px; flex-wrap:wrap; }
+.filter-chip { padding:5px 12px; border-radius:100px; border:1.5px solid var(--border2); font-size:12px; font-weight:600; cursor:pointer; transition:all 0.13s; color:var(--muted); background:var(--white); user-select:none; }
+.filter-chip:hover { border-color:var(--accent); color:var(--accent); }
+.filter-chip.active { background:var(--accent-light); border-color:var(--accent); color:var(--accent); }
+
+/* ── QUEUE FEED ── */
+.queue-feed { max-width:680px; margin:0 auto; padding:1.5rem 2rem; display:flex; flex-direction:column; gap:0; }
+.feed-date-divider { font-size:11px; font-weight:700; color:var(--faint); text-transform:uppercase; letter-spacing:1px; padding:1.25rem 0 0.6rem; display:flex; align-items:center; gap:10px; }
+.feed-date-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.feed-card { background:var(--white); border:1.5px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.05); transition:all 0.15s; }
+.feed-card:hover { box-shadow:0 3px 12px rgba(0,0,0,0.08); border-color:var(--border2); }
+.feed-card.fc-approved { border-color:rgba(22,163,74,0.35); }
+.feed-card.fc-posted { opacity:0.6; }
+.feed-card-header { display:flex; align-items:center; gap:10px; padding:0.875rem 1rem 0; }
+.fc-plat-badge { display:inline-flex; align-items:center; gap:5px; border-radius:5px; padding:3px 8px; font-size:11px; font-weight:700; }
+.fc-plat-badge.li { background:#EBF4FF; color:var(--li-blue); }
+.fc-plat-badge.x { background:#F3F3F3; color:#111; }
+.fc-style-tag { font-size:11px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:0.5px; }
+.fc-status { margin-left:auto; font-size:11px; font-weight:700; padding:2px 8px; border-radius:100px; }
+.fc-status.draft { color:var(--muted); background:var(--surface2); }
+.fc-status.scheduled { color:var(--teal); background:var(--teal-light); }
+.fc-status.approved { color:var(--green); background:var(--green-light); }
+.fc-status.posted { color:var(--faint); background:var(--border); }
+.fc-topic { display:inline-block; font-size:10px; font-weight:600; color:var(--violet); background:var(--violet-light); border-radius:4px; padding:2px 7px; margin:0 1rem 0; }
+.feed-card-body { padding:0.7rem 1rem 0; font-size:13px; line-height:1.8; color:var(--text); white-space:pre-wrap; max-height:120px; overflow:hidden; position:relative; }
+.feed-card-body.expanded { max-height:none; }
+.feed-card-body::after { content:''; position:absolute; bottom:0; left:0; right:0; height:40px; background:linear-gradient(transparent, var(--white)); pointer-events:none; }
+.feed-card-body.expanded::after { display:none; }
+.feed-card-expand { background:none; border:none; color:var(--accent); font-size:12px; font-weight:600; cursor:pointer; padding:4px 1rem; font-family:'Plus Jakarta Sans',sans-serif; display:block; }
+.feed-card-actions { display:flex; gap:7px; padding:0.75rem 1rem; border-top:1px solid var(--border); margin-top:0.7rem; }
+.fc-btn { padding:8px 12px; border-radius:8px; border:1.5px solid var(--border2); font-size:12px; font-weight:700; cursor:pointer; background:var(--white); font-family:'Plus Jakarta Sans',sans-serif; transition:all 0.13s; }
+.fc-btn.approve-post { color:white; background:var(--green); border-color:var(--green); flex:2; box-shadow:0 2px 6px rgba(22,163,74,0.25); }
+.fc-btn.approve-post:hover { background:#15803D; transform:translateY(-1px); }
+.fc-btn.edit { color:var(--text); }
+.fc-btn.edit:hover { background:var(--surface2); }
+.fc-btn.regen { color:var(--accent); border-color:rgba(255,92,53,0.25); }
+.fc-btn.regen:hover { background:var(--accent-light); border-color:var(--accent); }
+.fc-btn.posted-btn { color:var(--faint); background:var(--surface2); border-color:var(--border); flex:2; cursor:default; }
+
+/* ── FULL CALENDAR ── */
+.full-cal-wrap { padding:1rem 1.5rem 1.5rem; }
+.full-cal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:3px; }
+.full-cal-dow { font-size:11px; font-weight:700; color:var(--faint); text-align:center; padding:6px 0; text-transform:uppercase; letter-spacing:0.5px; }
+.full-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.full-cal-cell { min-height:88px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:6px 7px; cursor:pointer; transition:all 0.13s; display:flex; flex-direction:column; position:relative; }
+.full-cal-cell:hover:not(.empty-cell) { border-color:var(--accent); box-shadow:0 2px 8px rgba(0,0,0,0.07); z-index:1; }
+.full-cal-cell.today { border-color:var(--accent); border-width:2px; }
+.full-cal-cell.has-post:hover { border-color:var(--accent); }
+.full-cal-cell.overdue-cell { background:#FEF0EE; border-color:#FECACA; }
+.full-cal-cell.empty-cell { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
+.full-cal-cell.filtered-out { opacity:0.2; pointer-events:none; }
+.full-cal-cell.drag-target { background:var(--accent-light); border-color:var(--accent); border-style:dashed; }
+.fcc-num { font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; display:flex; align-items:center; justify-content:space-between; }
+.fcc-num.today-num { color:var(--accent); font-size:13px; }
+.fcc-today-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); }
+.fcc-post-chip { border-radius:4px; padding:2px 6px; font-size:10px; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+.fcc-post-chip.li-chip { background:var(--teal-light); color:var(--teal); }
+.fcc-post-chip.x-chip { background:#F3F3F3; color:#555; }
+.fcc-post-chip.approved-chip { background:var(--green-light); color:var(--green); }
+.fcc-post-chip.overdue-chip { background:#FEE2E2; color:#DC2626; }
+.fcc-preview { font-size:10px; color:var(--muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+/* ── VOICE & STYLE ── */
+.voice-card { background:var(--white); border:1.5px solid var(--border); border-radius:14px; padding:1.25rem; box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+.voice-card-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.voice-card-sub { font-size:12px; color:var(--muted); line-height:1.5; }
+.slider-rows { display:flex; flex-direction:column; gap:16px; margin-top:1.1rem; }
+.slider-row { display:grid; grid-template-columns:110px 1fr 110px auto; align-items:center; gap:10px; }
+.slider-label-left { font-size:11px; font-weight:600; color:var(--muted); text-align:right; }
+.slider-label-right { font-size:11px; font-weight:600; color:var(--muted); }
+.slider-val { font-size:11px; font-weight:700; color:var(--accent); font-family:'DM Mono',monospace; min-width:120px; text-align:right; }
+.voice-slider { width:100%; accent-color:var(--accent); cursor:pointer; height:4px; }
+.toggle-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--border); cursor:pointer; transition:all 0.13s; }
+.toggle-row:last-child { border-bottom:none; }
+.toggle-row:hover { opacity:0.85; }
+.toggle-title { font-size:13px; font-weight:600; color:var(--text); }
+.toggle-desc { font-size:11px; color:var(--faint); margin-top:2px; line-height:1.4; }
+.toggle-switch { width:34px; height:20px; border-radius:100px; background:var(--border2); flex-shrink:0; position:relative; transition:all 0.2s; margin-top:2px; cursor:pointer; }
+.toggle-switch::after { content:''; position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:white; transition:all 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+.toggle-switch.active { background:var(--green); }
+.toggle-switch.active::after { left:17px; }
+.voice-sample-ta { width:100%; border:1.5px solid var(--border2); border-radius:9px; padding:10px 13px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; line-height:1.7; color:var(--text); resize:vertical; min-height:100px; background:var(--white); transition:all 0.15s; }
+.voice-sample-ta:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-mid); }
+.voice-sample-row { margin-bottom:10px; }
+.voice-sample-analysis { background:var(--violet-light); border:1px solid rgba(124,77,255,0.15); border-left:3px solid var(--violet); border-radius:8px; padding:10px 12px; font-size:12px; color:#4C3799; line-height:1.65; margin-top:6px; }
+.voice-add-sample-btn { background:transparent; border:1.5px dashed var(--border2); color:var(--muted); padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; transition:all 0.15s; width:100%; margin-top:4px; }
+.voice-add-sample-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+
+/* red-light for overdue */
+:root { --red-light: #FEF0EE; }
+.settings-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.settings-card-header { display: flex; align-items: center; gap: 12px; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.settings-card-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.settings-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.settings-card-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.settings-status-badge { font-size: 11px; font-weight: 700; color: var(--faint); white-space: nowrap; flex-shrink: 0; }
+.settings-status-badge.connected { color: var(--green); }
+.settings-card-body { padding: 1rem 1.25rem; }
+.settings-how-it-works { font-size: 12px; color: var(--muted); background: var(--bg); border-radius: 8px; padding: 10px 12px; line-height: 1.65; }
+
+/* Approve + Post button */
+.act-approve-post { color: white; background: var(--green); border-color: var(--green); box-shadow: 0 2px 6px rgba(22,163,74,0.3); font-size: 11px !important; }
+.act-approve-post:hover { background: #15803D; border-color: #15803D; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(22,163,74,0.4); }
+.modal-btn.approve-post { color: white; background: var(--green); border-color: var(--green); box-shadow: 0 2px 6px rgba(22,163,74,0.25); }
+.modal-btn.approve-post:hover { background: #15803D; transform: translateY(-1px); }
+
+/* Toast animation */
+@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+#post-toast.show { animation: toastIn 0.2s ease; }
+.checklist-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 13px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.checklist-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px 8px; background: linear-gradient(135deg, var(--accent-light), #F3EEFF); border-bottom: 1px solid var(--border); }
+.checklist-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.checklist-pct { font-size: 11px; font-weight: 700; color: var(--accent); font-family: 'DM Mono', monospace; }
+.checklist-progress { height: 3px; background: var(--border); }
+.checklist-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--violet)); transition: width 0.4s ease; border-radius: 0 2px 2px 0; }
+.checklist-item { display: flex; align-items: center; gap: 10px; padding: 9px 13px; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.13s; }
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item:hover { background: var(--bg); }
+.checklist-item.done { opacity: 0.5; }
+.ci-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; background: var(--white); }
+.checklist-item.done .ci-circle { background: var(--green); border-color: var(--green); }
+.ci-text { flex: 1; min-width: 0; }
+.ci-title { font-size: 12px; font-weight: 600; color: var(--text); }
+.checklist-item.done .ci-title { text-decoration: line-through; color: var(--muted); }
+.ci-desc { font-size: 11px; color: var(--faint); margin-top: 1px; }
+.ci-cta { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); border-radius: 5px; padding: 2px 8px; white-space: nowrap; flex-shrink: 0; }
+.checklist-item.done .ci-cta { display: none; }
+
+/* queue */
+.queue-item { background: var(--white); border: 1.5px solid var(--border); border-radius: 11px; padding: 11px 13px; margin-bottom: 7px; cursor: pointer; transition: all 0.15s; }
+.queue-item:hover { border-color: var(--border2); }
+.queue-item.open { border-color: var(--accent); }
+.qi-header { display: flex; align-items: center; justify-content: space-between; }
+.qi-day-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.qi-plat { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--li-blue); }
+.qi-plat.x-plat { color: var(--text); }
+.qi-preview { font-size: 13px; color: var(--text); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qi-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13px; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
+.qi-body.open { display: block; animation: fadeUp 0.15s ease; }
+.qi-footer { display: none; margin-top: 9px; gap: 6px; }
+.qi-footer.open { display: flex; }
+.qi-btn { padding: 6px 12px; border-radius: 7px; border: 1.5px solid var(--border2); font-size: 12px; font-weight: 600; cursor: pointer; background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.13s; }
+.qi-btn.approve { color: var(--green); border-color: rgba(22,163,74,0.3); }
+.qi-btn.approve:hover { background: var(--green-light); }
+.qi-btn.edit { color: var(--muted); }
+.qi-btn.edit:hover { background: var(--surface2); color: var(--text); }
+.qi-chevron { margin-left: auto; color: var(--faint); font-size: 12px; transition: transform 0.2s; }
+.qi-chevron.open { transform: rotate(180deg); }
+
+.action-row { display: flex; align-items: flex-start; gap: 8px; padding: 9px 11px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 5px; font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.13s; }
+.action-row:hover { border-color: var(--accent); color: var(--text); }
+.action-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 4px; }
+
+/* approved banner */
+.approved-banner { background: var(--green-light); border: 1.5px solid rgba(22,163,74,0.25); border-radius: 13px; padding: 1.5rem; text-align: center; }
+.approved-banner h3 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 800; color: #166534; margin-bottom: 0.35rem; }
+.approved-banner p { font-size: 13px; color: #15803D; margin-bottom: 1rem; }
+.copy-btn { background: var(--white); border: 1.5px solid rgba(22,163,74,0.3); padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 600; color: #166534; cursor: pointer; transition: all 0.13s; font-family: 'Plus Jakarta Sans', sans-serif; }
+.copy-btn:hover { background: var(--green-light); border-color: var(--green); }
+
+.edit-area { width: 100%; background: var(--white); border: 1.5px solid var(--accent); border-radius: 9px; padding: 0.9rem; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; line-height: 1.8; resize: vertical; min-height: 150px; }
+.edit-area:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-mid); }
+
+/* placeholder pages */
+.placeholder-page { display: none; min-height: calc(100vh - 56px); align-items: center; justify-content: center; flex-direction: column; gap: 1rem; text-align: center; }
+.placeholder-page.visible { display: flex; }
+.placeholder-page svg { width: 44px; height: 44px; color: var(--faint); }
+.placeholder-page h3 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 800; color: var(--muted); }
+.placeholder-page p { font-size: 14px; color: var(--faint); max-width: 260px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- ═══ SPLASH ═══ -->
+<div id="splash">
+  <div class="splash-left">
+    <div class="logo-wrap" style="margin-bottom:2.5rem">
+      <div class="logo-icon"><svg viewBox="0 0 17 17" fill="none"><rect x="2" y="3.5" width="13" height="2.5" rx="1.25" fill="white"/><rect x="2" y="7.25" width="9" height="2.5" rx="1.25" fill="white"/><rect x="2" y="11" width="11" height="2.5" rx="1.25" fill="white"/><path d="M12 13.5l1.2 1.2 2.3-2.3" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="logo-text">Caden<em>ce</em></div>
+    </div>
+    <div class="splash-eyebrow"><div class="splash-eyebrow-dot"></div>LinkedIn voice engine for SDR teams</div>
+    <h1>Your reps, posting<br><em>every single day.</em></h1>
+    <p class="splash-sub">Cadence turns real work stories into approved LinkedIn posts — in under 60 seconds. No blank pages. No generic AI slop.</p>
+    <p class="splash-proof-line">Built for <strong>sales managers</strong> who know pipeline starts with presence.</p>
+    <div class="splash-btns">
+      <button class="btn-primary" onclick="startOnboarding()">Start free trial →</button>
+      <button class="btn-ghost" onclick="loadDemo()">See the dashboard</button>
+    </div>
+    <div class="splash-social">
+      <div class="splash-avatars">
+        <span style="background:#FF5C35">O</span>
+        <span style="background:#7C4DFF">K</span>
+        <span style="background:#0EA47A">B</span>
+        <span style="background:#D97706">D</span>
+        <span style="background:#0A66C2">L</span>
+      </div>
+      <span class="splash-social-text">Trusted by <strong>240+ SDR teams</strong> posting consistently</span>
+    </div>
+    <p class="splash-note">14-day free trial · No credit card · $39/mo after</p>
+  </div>
+  <div class="splash-right">
+    <div class="splash-card">
+      <div class="sc-badge">Today's post ✓</div>
+      <div class="sc-top">
+        <div class="sc-user">
+          <div class="sc-avatar">O</div>
+          <div><div class="sc-name">Oli Elliott</div><div class="sc-role">Head of SDR · Pepper</div></div>
+        </div>
+        <div class="sc-li">LinkedIn</div>
+      </div>
+      <div class="sc-body">I've managed SDR teams long enough to know this:<br><br>The reps who hit quota consistently aren't the ones with the best pitch. They do the work nobody else wants to do.<br><br>Same inputs. Completely different outputs.</div>
+      <div class="sc-actions">
+        <div class="sc-btn approve">✓ Approved</div>
+        <div class="sc-btn edit">Edit</div>
+        <div class="sc-btn regen">↺ Regen</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ONBOARDING ═══ -->
+<div id="onboarding">
+  <div class="ob-header">
+    <div class="logo-wrap">
+      <div class="logo-icon"><svg viewBox="0 0 17 17" fill="none"><rect x="2" y="3.5" width="13" height="2.5" rx="1.25" fill="white"/><rect x="2" y="7.25" width="9" height="2.5" rx="1.25" fill="white"/><rect x="2" y="11" width="11" height="2.5" rx="1.25" fill="white"/><path d="M12 13.5l1.2 1.2 2.3-2.3" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="logo-text">Caden<em>ce</em></div>
+    </div>
+    <div class="ob-step-pill" id="step-counter">1 / 5</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+
+  <div class="step-content active" id="step-1">
+    <div class="step-eyebrow">Step 1 — Profile</div>
+    <h2 class="step-title">Let's build your profile</h2>
+    <p class="step-sub">Cadence writes in your voice — the more it knows about you, the better the output.</p>
+    <div class="form-group"><label>Full name</label><input type="text" id="ob-name" placeholder="Oli Elliott"/></div>
+    <div class="form-group"><label>Role / Title</label><input type="text" id="ob-role" placeholder="Head of SDR"/></div>
+    <div class="form-group"><label>Company</label><input type="text" id="ob-company" placeholder="Pepper"/></div>
+    <div class="form-group"><label>Industry</label>
+      <select id="ob-industry"><option value="">Select your industry</option><option>B2B SaaS</option><option>Sales & Revenue</option><option>Marketing</option><option>Recruiting & HR</option><option>Finance</option><option>Operations</option><option>Other</option></select>
+    </div>
+    <div class="step-nav"><button class="btn-primary btn-next" onclick="goStep(2)">Continue →</button></div>
+  </div>
+
+  <div class="step-content" id="step-2">
+    <div class="step-eyebrow">Step 2 — Strategy</div>
+    <h2 class="step-title">Who are you talking to?</h2>
+    <p class="step-sub">This shapes the angle and tone of every post Cadence generates.</p>
+    <div class="form-group"><label>Primary goal</label>
+      <div class="chip-group" id="goal-chips">
+        <div class="chip" onclick="selectChip(this,'goal')">Thought leadership</div>
+        <div class="chip" onclick="selectChip(this,'goal')">Lead generation</div>
+        <div class="chip" onclick="selectChip(this,'goal')">Brand awareness</div>
+        <div class="chip" onclick="selectChip(this,'goal')">Talent attraction</div>
+        <div class="chip" onclick="selectChip(this,'goal')">Community building</div>
+      </div>
+    </div>
+    <div class="form-group"><label>Target audience</label><input type="text" id="ob-audience" placeholder="Sales leaders, SDR managers, B2B founders"/></div>
+    <div class="form-group"><label>Tone preference</label>
+      <div class="chip-group" id="tone-chips">
+        <div class="chip" onclick="selectChip(this,'tone')">Bold & direct</div>
+        <div class="chip" onclick="selectChip(this,'tone')">Professional</div>
+        <div class="chip" onclick="selectChip(this,'tone')">Conversational</div>
+        <div class="chip" onclick="selectChip(this,'tone')">Analytical</div>
+        <div class="chip" onclick="selectChip(this,'tone')">Provocative</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <button class="btn-primary btn-next" onclick="goStep(3)">Continue →</button>
+    </div>
+  </div>
+
+  <div class="step-content" id="step-3">
+    <div class="step-eyebrow">Step 3 — Topics</div>
+    <h2 class="step-title">What do you want to own?</h2>
+    <p class="step-sub">Pick 3–5 topics. Cadence rotates through these to keep your content fresh.</p>
+    <div class="form-group"><label>Your content pillars</label>
+      <div class="chip-group" id="topic-chips">
+        <div class="chip" onclick="toggleChip(this)">SDR coaching</div>
+        <div class="chip" onclick="toggleChip(this)">Pipeline strategy</div>
+        <div class="chip" onclick="toggleChip(this)">Sales leadership</div>
+        <div class="chip" onclick="toggleChip(this)">Cold outreach</div>
+        <div class="chip" onclick="toggleChip(this)">Team culture</div>
+        <div class="chip" onclick="toggleChip(this)">AI in sales</div>
+        <div class="chip" onclick="toggleChip(this)">Hiring & talent</div>
+        <div class="chip" onclick="toggleChip(this)">Quota attainment</div>
+        <div class="chip" onclick="toggleChip(this)">Revenue ops</div>
+        <div class="chip" onclick="toggleChip(this)">Founder mindset</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:1.25rem"><label>Posting frequency</label>
+      <div class="chip-group" id="freq-chips">
+        <div class="chip" onclick="selectChip(this,'freq')">1× per week</div>
+        <div class="chip" onclick="selectChip(this,'freq')">3× per week</div>
+        <div class="chip" onclick="selectChip(this,'freq')">5× per week</div>
+        <div class="chip" onclick="selectChip(this,'freq')">Daily</div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <button class="btn-primary btn-next" onclick="goStep(4)">Continue →</button>
+    </div>
+  </div>
+
+  <div class="step-content" id="step-4">
+    <div class="step-eyebrow">Step 4 — Test drive</div>
+    <h2 class="step-title">See Cadence in action</h2>
+    <p class="step-sub">One sentence is enough. Tell us something real from work — we'll write the posts.</p>
+    <div class="form-group"><label>What happened at work recently?</label>
+      <textarea id="ob-hook" placeholder="e.g. Our team just closed our biggest enterprise deal after 3 months of multi-threading. Felt like a masterclass in patience."></textarea>
+    </div>
+    <div id="generated-posts"></div>
+    <div class="step-nav">
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
+      <button class="btn-primary btn-next" id="gen-btn" onclick="generateTestPosts()">Generate my posts →</button>
+    </div>
+  </div>
+
+  <div class="step-content" id="step-5">
+    <div class="step-eyebrow">You're in 🎉</div>
+    <h2 class="step-title">Cadence is ready.</h2>
+    <p class="step-sub">Your first week of posts is generated and waiting in your queue.</p>
+    <div style="background:var(--accent-light);border:1.5px solid rgba(255,92,53,0.2);border-radius:14px;padding:1.75rem;margin-bottom:1.75rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
+        <div><div style="font-family:'Fraunces',serif;font-size:34px;font-weight:800;color:var(--accent)" id="final-topics">4</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Topics</div></div>
+        <div><div style="font-family:'Fraunces',serif;font-size:34px;font-weight:800;color:var(--accent)">7</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Posts ready</div></div>
+        <div><div style="font-family:'Fraunces',serif;font-size:34px;font-weight:800;color:var(--accent)">0</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Day streak</div></div>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%;font-size:15px;padding:13px" onclick="openDashboard()">Open my dashboard →</button>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard">
+  <!-- Sidebar -->
+  <div class="dash-sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-wrap">
+        <div class="logo-icon"><svg viewBox="0 0 17 17" fill="none"><rect x="2" y="3.5" width="13" height="2.5" rx="1.25" fill="white"/><rect x="2" y="7.25" width="9" height="2.5" rx="1.25" fill="white"/><rect x="2" y="11" width="11" height="2.5" rx="1.25" fill="white"/><path d="M12 13.5l1.2 1.2 2.3-2.3" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="logo-text">Caden<em>ce</em></div>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-item active" onclick="setPage('today',this)">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 10h6M7 13h4M7 7h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Dashboard <span class="nav-badge">1</span>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-section">Content</div>
+      <div class="nav-item" onclick="setPage('queue',this)">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="2.5" rx="1.25" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="8.75" width="10" height="2.5" rx="1.25" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="13.5" width="12" height="2.5" rx="1.25" stroke="currentColor" stroke-width="1.5"/></svg>
+        Queue
+      </div>
+      <div class="nav-item" onclick="setPage('calendar',this)">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="13" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 2v4M13 2v4M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Calendar
+      </div>
+      <div class="nav-item" onclick="setPage('voice',this)">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v9M7 6v5M4 8v1M13 6v5M16 8v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 16h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Voice & Style
+      </div>
+    </div>
+
+    <div class="nav-group">
+
+    </div>
+
+    <div class="nav-group" style="flex:1">
+      <div class="nav-section">Team</div>
+      <div class="nav-item" onclick="setPage('team',this)">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="7" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 16c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 12c1.657 0 3 1.343 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Scoreboard
+      </div>
+      <div class="nav-item" onclick="setPage('settings',this)">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Settings
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="upgrade-nudge">
+        <p>🔥 12 days left on trial</p>
+        <button onclick="this.textContent='Coming soon!'">Upgrade to Pro — $39/mo</button>
+      </div>
+      <div class="user-row">
+        <div class="avatar" id="sb-avatar">O</div>
+        <div>
+          <div class="user-name-sm" id="sb-name">Oli Elliott</div>
+          <div class="user-plan-sm">Free trial</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <div class="greeting-text" id="dash-greeting">Good morning, Oli 👋</div>
+        <div class="greeting-sub" id="dash-date">Thursday, May 7 · 3 posts this week</div>
+      </div>
+      <div class="topbar-right">
+        <div class="streak-pill">🔥 <span id="streak-count">3</span> day streak</div>
+        <div class="notif-btn"><div class="notif-dot"></div>
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 0 1 6 6v3l1.5 2.5H2.5L4 11V8a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 16.5a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODAY PAGE -->
+    <div id="page-today">
+      <div class="dash-grid">
+        <div class="dash-col">
+          <div class="col-label">Today's focus</div>
+          <div id="today-post-wrap">
+            <div class="post-card" id="today-post-card">
+              <div class="post-card-top">
+                <div class="li-badge">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="var(--li-blue)"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.024-3.037-1.852-3.037-1.851 0-2.132 1.445-2.132 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  LinkedIn
+                </div>
+                <div class="post-style-label">Story hook</div>
+              </div>
+              <div class="post-card-body" id="today-post-body">Loading...</div>
+              <div class="post-card-actions" id="tpc-actions">
+                <button class="act-btn act-approve-post" onclick="approveAndPost('linkedin', state.todayPost)">✓ Approve + Post</button>
+                <button class="act-btn act-edit" onclick="editPost()">Edit</button>
+                <button class="act-btn act-regen" onclick="regenPost()">↺ Regen</button>
+              </div>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-tile">
+              <div class="stat-tile-label">Posts this month</div>
+              <div class="stat-tile-val accent" id="posts-month">8</div>
+              <div class="stat-tile-sub">↑ 3 vs last month</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-tile-label">Queue ready</div>
+              <div class="stat-tile-val green">6</div>
+              <div class="stat-tile-sub">Next: Tomorrow</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-tile-label">Best style</div>
+              <div class="stat-tile-val sm">Story hook</div>
+              <div class="stat-tile-sub">3× avg engagement</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-tile-label">Consistency</div>
+              <div class="stat-tile-val green">84%</div>
+              <div class="stat-tile-sub">Top 12% of users</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar col -->
+        <div class="dash-col">
+          <div class="col-label">Calendar</div>
+          <div class="cal-nav">
+            <button class="cal-arrow" onclick="shiftCal(-1)">‹</button>
+            <span class="cal-month-label" id="cal-month-label">May 2026</span>
+            <button class="cal-arrow" onclick="shiftCal(1)">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-popover" id="cal-popover">
+            <div class="cal-pop-header">
+              <div class="cal-pop-date" id="cal-pop-date"></div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <div class="cal-pop-tags" id="cal-pop-tags"></div>
+                <button class="cal-pop-expand-btn" id="cal-pop-expand" onclick="openModal()" title="Expand post">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M9 1h4v4M5 13H1V9M14 1l-5 5M1 13l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <div id="cal-pop-content"></div>
+          </div>
+          <div class="insight-bar" id="insight-bar">Loading insight...</div>
+        </div>
+
+        <!-- Queue col -->
+        <div class="dash-col">
+          <div class="col-label">This week's queue</div>
+          <div id="queue-list"></div>
+          <div style="margin-top:1.1rem">
+            <div class="col-label">Setup checklist</div>
+            <div class="checklist-card">
+              <div class="checklist-header">
+                <div class="checklist-title">Get the most out of Cadence</div>
+                <div class="checklist-pct" id="checklist-pct">0 / 5 done</div>
+              </div>
+              <div class="checklist-progress"><div class="checklist-progress-fill" id="checklist-fill" style="width:0%"></div></div>
+              <div class="checklist-item" id="ci-0" onclick="toggleCheck(0)">
+                <div class="ci-circle" id="cic-0"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="ci-text"><div class="ci-title">Approve your first post</div><div class="ci-desc">Hit approve on today's post above</div></div>
+                <div class="ci-cta">Do it ↑</div>
+              </div>
+              <div class="checklist-item" id="ci-1" onclick="toggleCheck(1)">
+                <div class="ci-circle" id="cic-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="ci-text"><div class="ci-title">Connect LinkedIn</div><div class="ci-desc">Publish directly without copy-pasting</div></div>
+                <div class="ci-cta">Connect</div>
+              </div>
+              <div class="checklist-item" id="ci-2" onclick="toggleCheck(2)">
+                <div class="ci-circle" id="cic-2"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="ci-text"><div class="ci-title">Review your voice settings</div><div class="ci-desc">Make sure Cadence sounds like you</div></div>
+                <div class="ci-cta">Review</div>
+              </div>
+              <div class="checklist-item" id="ci-3" onclick="toggleCheck(3)">
+                <div class="ci-circle" id="cic-3"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="ci-text"><div class="ci-title">Rate 3 past posts</div><div class="ci-desc">Helps Cadence learn what works for you</div></div>
+                <div class="ci-cta">Rate</div>
+              </div>
+              <div class="checklist-item" id="ci-4" onclick="toggleCheck(4)">
+                <div class="ci-circle" id="cic-4"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="ci-text"><div class="ci-title">Invite a teammate</div><div class="ci-desc">Unlock the team leaderboard</div></div>
+                <div class="ci-cta">Invite</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAM SCOREBOARD -->
+    <div id="page-team" class="placeholder-page" style="display:none;align-items:flex-start;padding:1.5rem 1.75rem">
+      <div style="width:100%">
+        <div class="col-label" style="margin-bottom:1.25rem">Team Scoreboard — May 2026</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1.5rem">
+          <div class="stat-tile"><div class="stat-tile-label">Team posts this month</div><div class="stat-tile-val accent">47</div><div class="stat-tile-sub">↑ 12 vs April</div></div>
+          <div class="stat-tile"><div class="stat-tile-label">Active posters</div><div class="stat-tile-val green" style="font-size:22px;padding-top:4px">8 / 12</div><div class="stat-tile-sub">67% of team</div></div>
+          <div class="stat-tile"><div class="stat-tile-label">Avg streak</div><div class="stat-tile-val accent">4.2</div><div class="stat-tile-sub">days per person</div></div>
+        </div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.05);margin-bottom:1.25rem">
+          <div style="font-size:10px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem">Leaderboard</div>
+          <div id="leaderboard-rows"></div>
+        </div>
+        <div style="background:var(--amber-light);border:1.5px solid rgba(217,119,6,0.2);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:3px">🏆 This week's challenge</div>
+            <div style="font-size:13px;color:var(--text)">Post 3× before Friday — earn the <strong>Consistent Creator</strong> badge</div>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:var(--amber);background:rgba(217,119,6,0.15);border-radius:8px;padding:6px 12px;white-space:nowrap">2 days left</div>
+        </div>
+      </div>
+    </div>
+
+<!-- ═══ POST MODAL ═══ -->
+
+    <!-- ══ QUEUE PAGE — FEED ══ -->
+    <div id="page-queue" style="display:none;min-height:calc(100vh - 56px);overflow-y:auto">
+      <div class="page-topbar">
+        <div>
+          <div class="page-title">Queue</div>
+          <div class="page-sub" id="queue-sub">All upcoming posts</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="filter-chip-group">
+            <div class="filter-chip active" onclick="filterFeed('all',this)">All</div>
+            <div class="filter-chip" onclick="filterFeed('draft',this)">Drafts</div>
+            <div class="filter-chip" onclick="filterFeed('scheduled',this)">Scheduled</div>
+            <div class="filter-chip" onclick="filterFeed('approved',this)">Approved</div>
+            <div class="filter-chip" onclick="filterFeed('posted',this)">Posted</div>
+          </div>
+          <button class="page-action-btn" onclick="addFeedPost()">+ New post</button>
+        </div>
+      </div>
+      <div class="queue-feed" id="queue-feed"></div>
+    </div>
+
+    <!-- ══ CALENDAR PAGE ══ -->
+    <div id="page-calendar" style="display:none;min-height:calc(100vh - 56px);overflow-y:auto">
+      <div class="page-topbar">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div>
+            <div class="page-title" id="full-cal-title">May 2026</div>
+            <div class="page-sub">Click a post to view it · Drag to reschedule</div>
+          </div>
+          <div style="display:flex;gap:4px">
+            <button class="cal-arrow" onclick="shiftFullCal(-1)">‹</button>
+            <button class="cal-arrow" onclick="shiftFullCal(1)">›</button>
+          </div>
+        </div>
+        <div class="filter-chip-group">
+          <div class="filter-chip active" onclick="filterCal('all',this)">All</div>
+          <div class="filter-chip" onclick="filterCal('linkedin',this)">LinkedIn</div>
+          <div class="filter-chip" onclick="filterCal('x',this)">X/Twitter</div>
+          <div class="filter-chip" onclick="filterCal('approved',this)">Approved</div>
+          <div class="filter-chip" onclick="filterCal('overdue',this)">Overdue</div>
+        </div>
+      </div>
+      <div class="full-cal-wrap">
+        <div class="full-cal-dow-row">
+          <div class="full-cal-dow">Mon</div><div class="full-cal-dow">Tue</div>
+          <div class="full-cal-dow">Wed</div><div class="full-cal-dow">Thu</div>
+          <div class="full-cal-dow">Fri</div>
+          <div class="full-cal-dow" style="color:var(--faint)">Sat</div>
+          <div class="full-cal-dow" style="color:var(--faint)">Sun</div>
+        </div>
+        <div class="full-cal-grid" id="full-cal-cells"></div>
+      </div>
+    </div>
+
+    <!-- ══ VOICE & STYLE PAGE ══ -->
+    <div id="page-voice" style="display:none;min-height:calc(100vh - 56px);overflow-y:auto">
+      <div class="page-topbar">
+        <div>
+          <div class="page-title">Voice & Style</div>
+          <div class="page-sub">Define how Cadence writes for you — gets better every post</div>
+        </div>
+        <button class="page-action-btn" onclick="saveVoice()">Save changes</button>
+      </div>
+      <div style="padding:1.5rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;max-width:1000px">
+
+        <!-- Writing DNA -->
+        <div class="voice-card" style="grid-column:1/-1">
+          <div class="voice-card-title">✦ Writing DNA</div>
+          <div class="voice-card-sub">Drag each slider to define your voice. These feed directly into every post Cadence generates.</div>
+          <div class="slider-rows" id="dna-sliders">
+            <div class="slider-row">
+              <div class="slider-label-left">Formal</div>
+              <input type="range" class="voice-slider" min="0" max="100" value="25" oninput="updateSliderLabel(this,'tone-val')">
+              <div class="slider-label-right">Conversational</div>
+              <div class="slider-val" id="tone-val">Conversational</div>
+            </div>
+            <div class="slider-row">
+              <div class="slider-label-left">Short & punchy</div>
+              <input type="range" class="voice-slider" min="0" max="100" value="60" oninput="updateSliderLabel(this,'length-val')">
+              <div class="slider-label-right">Long & detailed</div>
+              <div class="slider-val" id="length-val">Balanced</div>
+            </div>
+            <div class="slider-row">
+              <div class="slider-label-left">Data-driven</div>
+              <input type="range" class="voice-slider" min="0" max="100" value="40" oninput="updateSliderLabel(this,'story-val')">
+              <div class="slider-label-right">Story-driven</div>
+              <div class="slider-val" id="story-val">Balanced</div>
+            </div>
+            <div class="slider-row">
+              <div class="slider-label-left">Safe & neutral</div>
+              <input type="range" class="voice-slider" min="0" max="100" value="65" oninput="updateSliderLabel(this,'prov-val')">
+              <div class="slider-label-right">Provocative</div>
+              <div class="slider-val" id="prov-val">Slightly provocative</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signature moves -->
+        <div class="voice-card">
+          <div class="voice-card-title">✦ Signature moves</div>
+          <div class="voice-card-sub">Toggle the elements that feel like you</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem">
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">Bold opening hook</div>
+                <div class="toggle-desc">First line grabs attention — a challenge, a stat, or a counter-intuitive statement</div>
+              </div>
+              <div class="toggle-switch active" data-key="bold_hook"></div>
+            </div>
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">Short sentence paragraphs</div>
+                <div class="toggle-desc">One sentence per line — the classic LinkedIn format</div>
+              </div>
+              <div class="toggle-switch active" data-key="short_para"></div>
+            </div>
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">Rhetorical questions</div>
+                <div class="toggle-desc">Uses questions to pull the reader forward</div>
+              </div>
+              <div class="toggle-switch" data-key="rhetorical"></div>
+            </div>
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">End with a CTA</div>
+                <div class="toggle-desc">Closes every post with a question or call to engage</div>
+              </div>
+              <div class="toggle-switch active" data-key="cta"></div>
+            </div>
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">Personal stories</div>
+                <div class="toggle-desc">Grounds every post in a real experience or anecdote</div>
+              </div>
+              <div class="toggle-switch active" data-key="personal"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post formatting -->
+        <div class="voice-card">
+          <div class="voice-card-title">✦ Post formatting</div>
+          <div class="voice-card-sub">Controls what gets added to every post</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem">
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">Hashtags</div>
+                <div class="toggle-desc">Add relevant hashtags to boost discoverability</div>
+              </div>
+              <div class="toggle-switch" data-key="hashtags" id="hashtag-toggle"></div>
+            </div>
+            <div class="hashtag-options" id="hashtag-options" style="display:none;margin-left:0;padding:10px 12px;background:var(--bg);border-radius:8px;margin-top:-2px">
+              <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Max hashtags</label>
+              <div class="filter-chip-group">
+                <div class="filter-chip active" onclick="selectMaxTags(3,this)">3</div>
+                <div class="filter-chip" onclick="selectMaxTags(5,this)">5</div>
+                <div class="filter-chip" onclick="selectMaxTags(10,this)">10</div>
+              </div>
+            </div>
+            <div class="toggle-row" onclick="toggleVoiceFeature(this)">
+              <div class="toggle-text">
+                <div class="toggle-title">Emojis</div>
+                <div class="toggle-desc">Sprinkle relevant emojis for visual break-up</div>
+              </div>
+              <div class="toggle-switch" data-key="emojis"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-text">
+                <div class="toggle-title">Target post length</div>
+                <div class="toggle-desc">Approximate word count per post</div>
+              </div>
+            </div>
+            <div class="filter-chip-group" style="margin-top:-4px">
+              <div class="filter-chip" onclick="selectLength('short',this)">Short ~150w</div>
+              <div class="filter-chip active" onclick="selectLength('medium',this)">Medium ~250w</div>
+              <div class="filter-chip" onclick="selectLength('long',this)">Long ~400w</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Voice samples -->
+        <div class="voice-card" style="grid-column:1/-1">
+          <div class="voice-card-title">✦ Voice samples</div>
+          <div class="voice-card-sub">Paste 1–3 of your real LinkedIn posts. Cadence will analyse your patterns and write more like you.</div>
+          <div style="margin-top:1rem">
+            <div id="voice-samples-list">
+              <div class="voice-sample-row" id="vs-0">
+                <textarea class="voice-sample-ta" placeholder="Paste a real LinkedIn post you're proud of…" oninput="analyseVoiceSample(0,this)"></textarea>
+                <div class="voice-sample-analysis" id="vsa-0" style="display:none"></div>
+              </div>
+            </div>
+            <button class="voice-add-sample-btn" onclick="addVoiceSample()" id="add-sample-btn">+ Add another sample</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="page-platforms" style="display:none"></div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="page-settings" style="display:none;overflow-y:auto;min-height:calc(100vh - 56px);padding:2rem 2.5rem">
+      <div style="max-width:580px">
+        <div style="margin-bottom:2rem">
+          <div class="col-label">Settings</div>
+          <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:0.25rem">Account & Platforms</div>
+          <div style="font-size:14px;color:var(--muted)">Connect your social profiles to enable one-click posting from Cadence.</div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:#EBF4FF">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.024-3.037-1.852-3.037-1.851 0-2.132 1.445-2.132 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </div>
+            <div style="flex:1">
+              <div class="settings-card-title">LinkedIn</div>
+              <div class="settings-card-desc">Opens the LinkedIn share composer with your text pre-copied</div>
+            </div>
+            <div class="settings-status-badge" id="li-status">● Not set up</div>
+          </div>
+          <div class="settings-card-body">
+            <div class="form-group" style="margin-bottom:0.75rem">
+              <label>Your LinkedIn profile URL</label>
+              <input type="text" id="li-url" placeholder="https://linkedin.com/in/yourname" oninput="savePlatform()"/>
+            </div>
+            <div class="settings-how-it-works">
+              <strong>How Approve + Post works:</strong> Cadence copies your post text to the clipboard and opens LinkedIn's compose window in a new tab. Paste (⌘V / Ctrl+V) and click Post. That's it.
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-card" style="margin-top:1rem">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:#F5F5F5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.826L2.25 2.25h6.89l4.261 5.636L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+            </div>
+            <div style="flex:1">
+              <div class="settings-card-title">X (Twitter)</div>
+              <div class="settings-card-desc">Uses Twitter's free web intent — text pre-fills the composer, no API needed</div>
+            </div>
+            <div class="settings-status-badge" id="x-status">● Not set up</div>
+          </div>
+          <div class="settings-card-body">
+            <div class="form-group" style="margin-bottom:0.75rem">
+              <label>Your X / Twitter handle</label>
+              <input type="text" id="x-handle" placeholder="@yourhandle" oninput="savePlatform()"/>
+            </div>
+            <div class="settings-how-it-works">
+              <strong>How it works:</strong> Cadence builds a <code style="background:var(--border);padding:1px 5px;border-radius:4px;font-size:11px">twitter.com/intent/tweet</code> URL with your text pre-filled and opens it in a new tab. All you do is click Tweet. Zero API cost.
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-card" style="margin-top:1rem">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--accent-light)">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="var(--accent)" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div style="flex:1">
+              <div class="settings-card-title">Your profile</div>
+              <div class="settings-card-desc">Name and role used in post generation</div>
+            </div>
+          </div>
+          <div class="settings-card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0.75rem">
+              <div class="form-group" style="margin-bottom:0"><label>Name</label><input type="text" id="settings-name" placeholder="Oli Elliott" oninput="savePlatform()"/></div>
+              <div class="form-group" style="margin-bottom:0"><label>Role</label><input type="text" id="settings-role" placeholder="Head of SDR" oninput="savePlatform()"/></div>
+            </div>
+            <div class="form-group" style="margin-bottom:0"><label>Company</label><input type="text" id="settings-company" placeholder="Pepper" oninput="savePlatform()"/></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- close dash-main -->
+</div><!-- close dashboard -->
+
+<!-- ═══ POST TOAST ═══ -->
+<div id="post-toast" style="display:none;position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--text);color:white;border-radius:12px;padding:14px 20px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.18);z-index:200;display:flex;align-items:center;gap:12px;max-width:460px;width:calc(100% - 3rem)">
+  <span id="toast-icon" style="font-size:20px">📋</span>
+  <div style="flex:1">
+    <div id="toast-title" style="font-weight:700;margin-bottom:2px">Text copied!</div>
+    <div id="toast-desc" style="font-size:12px;opacity:0.75">Opening LinkedIn… just paste and click Post</div>
+  </div>
+  <button onclick="hideToast()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif">✕</button>
+</div>
+
+<!-- ═══ POST MODAL ═══ -->
+<div class="modal-backdrop" id="post-modal" onclick="handleModalBackdropClick(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="li-badge" id="modal-platform-badge">LinkedIn</div>
+        <div class="modal-title" id="modal-date-title">May 19</div>
+        <div class="cal-pop-tag" id="modal-style-tag" style="margin-left:2px">Story</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <div class="modal-post-text" id="modal-post-text"></div>
+    </div>
+    <div class="modal-footer" id="modal-footer">
+      <button class="modal-btn approve-post" onclick="modalApproveAndPost()">✓ Approve + Post</button>
+      <button class="modal-btn edit" id="modal-edit-btn" onclick="modalEdit()">Edit</button>
+      <button class="modal-btn regen" onclick="modalRegen()">↺ Regen</button>
+      <button class="modal-btn copy" onclick="modalCopy()">Copy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── API CONFIG ──
+// Paste your Groq API key here OR enter it in the key prompt on load
+const MOCK_MODE = false;
+let GROQ_API_KEY = localStorage.getItem('cadence_groq_key') || '';
+
+// Groq API helper — OpenAI-compatible endpoint
+async function groqChat(prompt, maxTokens=700) {
+  if(!GROQ_API_KEY) {
+    const key = window.prompt('Enter your Groq API key (get one free at console.groq.com):');
+    if(!key) throw new Error('No API key provided');
+    GROQ_API_KEY = key.trim();
+    localStorage.setItem('cadence_groq_key', GROQ_API_KEY);
+  }
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: maxTokens,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.8
+    })
+  });
+  if(!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    if(res.status===401) { GROQ_API_KEY=''; localStorage.removeItem('cadence_groq_key'); }
+    throw new Error(err?.error?.message || `Groq error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content.trim();
+}
+
+const MOCK_TODAY_POST = `I've managed SDR teams long enough to know this:\n\nThe reps who hit quota consistently aren't the ones with the best pitch.\n\nThey're the ones who do the work nobody else wants to do — the research, the follow-up, the patience.\n\nMost people optimise for looking productive. The best reps optimise for being effective.\n\nSame inputs. Completely different outputs.`;
+
+const MOCK_INSIGHT = `Story hook posts are getting 3× more engagement this week — your Tuesday post is already set up for that format.`;
+
+const MOCK_TEST_POSTS = [
+  { platform: 'LinkedIn', style: 'Story', body: `I didn't expect this quarter to end the way it did.\n\nWe closed our biggest enterprise deal after 3 months of multi-threading across 6 stakeholders.\n\nHere's the thing nobody tells you about complex deals: patience isn't passive. It's the most active thing you can do.\n\nEvery touchpoint, every piece of value added, every week we stayed present without being pushy — that was the work.\n\nThe close was just the receipt.` },
+  { platform: 'X/Twitter', style: 'Observation', body: `Multi-threading isn't a tactic. It's a mindset.\n\nMost reps stop at the champion. The best reps build a coalition.\n\nJust closed a 3-month enterprise deal that had 6 decision-makers. Every single one mattered.` },
+  { platform: 'LinkedIn', style: 'Insight', body: `Hot take: most enterprise deals are lost before the first call ends.\n\nNot because the pitch was bad. Because the rep never mapped the power structure.\n\nKnow who owns the budget. Know who owns the problem. They're rarely the same person.` }
+];
+
+const QUEUE_DATA = [
+  { day: 'Tomorrow', platform: 'LinkedIn', isX: false, preview: 'The cold email mistake everyone makes — and how to stop it', full: `The cold email mistake everyone makes — and how to stop it.\n\nMost cold emails talk about the sender, not the reader.\n\n"We help companies like yours..." — who cares? You haven't earned that yet.\n\nStart with their world. Reference something specific. Make them feel seen.\n\nThen — and only then — tell them what you do.` },
+  { day: 'Wed 8', platform: 'X/Twitter', isX: true, preview: 'SDR metrics that actually matter vs ones that sound good', full: `SDR metrics that actually matter vs ones that sound good.\n\nMatters: Pipeline created, SAO rate, avg deal size sourced.\nSounds good: Dials, emails sent, activities logged.\n\nYour CRO doesn't care how busy your team looks.` },
+  { day: 'Thu 9', platform: 'LinkedIn', isX: false, preview: 'What 3 months of multi-threading taught me about patience', full: `What 3 months of multi-threading taught me about patience.\n\nWe touched 6 stakeholders before the deal closed. Some took 8 follow-ups. One ghosted for 3 weeks and came back with budget.\n\nThe rep who wanted to "just move on" after week 4 — he's glad he didn't.` },
+  { day: 'Fri 10', platform: 'LinkedIn', isX: false, preview: 'Pipeline is a lagging indicator. Here\'s what I watch instead', full: `Pipeline is a lagging indicator. Here's what I actually watch.\n\nBy the time pipeline looks bad, it's already too late.\n\nI watch: ICP account coverage, meaningful conversation rate, and rep response time on inbound signals.\n\nThose three numbers predict pipeline 6 weeks out.` },
+  { day: 'Mon 12', platform: 'X/Twitter', isX: true, preview: 'Hot take: SDR to AE handoff is where most deals die', full: `Hot take: the SDR to AE handoff is where most deals die.\n\nNot bad prospecting. Not bad demos. The handoff.\n\nFix your internal communication before blaming the market.` },
+];
+
+const CAL_DATA = {
+  2: { platform: 'LinkedIn', isX: false, style: 'Story', preview: 'Why I hire for curiosity over experience in SDR roles', full: `Why I hire for curiosity over experience in SDR roles.\n\nI've interviewed hundreds of SDR candidates. The ones who stand out aren't the ones with the best CV.\n\nThey're the ones who ask the best questions.\n\n"How does your team decide which accounts to prioritise?" "What does a great first call look like here?"\n\nCuriosity is a multiplier. Experience is a starting point. You can teach process. You can't teach hunger.` },
+  5: { platform: 'LinkedIn', isX: false, style: 'Insight', preview: 'The pipeline metric everyone ignores', full: `The pipeline metric everyone ignores: ICP account coverage.\n\nEvery team tracks pipeline created. Almost no team tracks what percentage of their Tier 1 ICP accounts have had a meaningful conversation in the last 90 days.\n\nThat number predicts your pipeline 6–8 weeks out better than anything else.\n\nIf it drops below 40%, you're about to have a bad quarter. Every time.` },
+  8: { platform: 'X/Twitter', isX: true, style: 'Observation', preview: 'SDR metrics that actually matter vs ones that sound good', full: `SDR metrics that actually matter vs ones that sound good.\n\nMatters: Pipeline created, SAO rate, avg deal size sourced.\nSounds good: Dials, emails sent, activities logged.\n\nYour CRO doesn't care how busy your team looks.` },
+  9: { platform: 'LinkedIn', isX: false, style: 'Story', preview: 'What 3 months of multi-threading taught me about patience', full: `What 3 months of multi-threading taught me about patience.\n\nWe touched 6 stakeholders before the deal closed. Some took 8 follow-ups. One ghosted for 3 weeks and came back with budget.\n\nThe rep who wanted to "just move on" after week 4 — he's glad he didn't.\n\nMulti-threading isn't a tactic. It's a test of whether you believe in the account enough to keep showing up.` },
+  12: { platform: 'X/Twitter', isX: true, style: 'Observation', preview: 'Hot take: SDR to AE handoff is where most deals die', full: `Hot take: the SDR to AE handoff is where most deals die.\n\nNot bad prospecting. Not bad demos. The handoff.\n\nFix your internal communication before blaming the market.` },
+  15: { platform: 'LinkedIn', isX: false, style: 'Story', preview: 'The rep who asked the wrong questions — and learned from it', full: `The rep who asked the wrong questions — and learned from it.\n\nEarly in his tenure, one of my SDRs was asking discovery questions that sounded great on paper but went nowhere.\n\n"What are your biggest challenges?" Dead end. Nobody wants to say "everything is broken" to a stranger.\n\nWe swapped to: "What did you try last time this came up?" Game changer.\n\nThe best discovery questions don't ask people to diagnose themselves. They ask them to tell stories.` },
+  16: { platform: 'LinkedIn', isX: false, style: 'Insight', preview: 'Contrarian take on activity-based selling', full: `Contrarian take: activity-based selling is making your team worse.\n\nWhen reps hit their call targets, they stop thinking. When they hit their email quotas, they stop personalising.\n\nThe goal was never 80 dials. The goal was 3 great conversations.\n\nOptimise for quality of interaction, not volume of activity. Your pipeline will look different in 60 days.` },
+  19: { platform: 'LinkedIn', isX: false, style: 'Story', preview: 'How we rebuilt our ICP from scratch in Q1', full: `How we rebuilt our ICP from scratch in Q1 — and what happened next.\n\nWe had a wide ICP. "Any company with a sales team." That's not an ICP, that's a prayer.\n\nWe went back through every closed-won deal for 18 months and looked for the pattern.\n\nTurns out: independent distributors with 15–80 employees, running on paper or spreadsheets, were closing at 3× the rate of everyone else.\n\nWe went narrow. SAO rate went from 28% to 47% in one quarter.` },
+  22: { platform: 'X/Twitter', isX: true, style: 'Observation', preview: 'What separates a 50% SAO rate from a 30% one', full: `What separates a 50% SAO rate from a 30% one?\n\nNot talent. Not territory. Not tools.\n\nIt's whether the rep actually researched the account before reaching out.\n\nEvery time.` },
+  26: { platform: 'LinkedIn', isX: false, style: 'Insight', preview: 'The question I ask every SDR in their 1:1', full: `The one question I ask every SDR in their 1:1 — and why it changes everything.\n\n"What's one account you've written off that you shouldn't have?"\n\nIt forces them to revisit assumptions. It uncovers deals that were abandoned too early. And it tells me immediately whether they're thinking like a hunter or just managing a list.\n\nThe best reps always have an answer. The reps who are coasting never do.` },
+};
+const OVERDUE = [1, 3];
+
+const state = {
+  name:'', role:'', company:'', industry:'', goal:'', audience:'', tone:'',
+  topics:[], frequency:'', hook:'', todayPost:'', editMode:false,
+  currentStep:1, calOffset:0, selectedCalDay:null, openQueueIdx:null
+};
+
+function $(id) { return document.getElementById(id); }
+
+function startOnboarding() { $('splash').style.display='none'; $('onboarding').style.display='block'; }
+
+function loadDemo() {
+  state.name='Oli'; state.role='Head of SDR'; state.company='Pepper';
+  state.topics=['SDR coaching','Pipeline strategy','Sales leadership','AI in sales'];
+  state.tone='Bold & direct'; state.goal='Thought leadership';
+  $('splash').style.display='none'; openDashboard();
+}
+
+function goStep(n) {
+  $(`step-${state.currentStep}`).classList.remove('active');
+  state.currentStep = n;
+  $(`step-${n}`).classList.add('active');
+  $('step-counter').textContent = `${n} / 5`;
+  $('progress-fill').style.width = `${n/5*100}%`;
+}
+
+function selectChip(el, g) {
+  document.querySelectorAll(`#${g}-chips .chip`).forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  if(g==='goal') state.goal=el.textContent;
+  if(g==='tone') state.tone=el.textContent;
+  if(g==='freq') state.frequency=el.textContent;
+}
+function toggleChip(el) { el.classList.toggle('selected'); }
+
+async function generateTestPosts() {
+  state.name=$('ob-name').value||'Oli'; state.role=$('ob-role').value||'Head of SDR';
+  state.company=$('ob-company').value||'Pepper';
+  const btn=$('gen-btn'); btn.disabled=true; btn.textContent='Generating...';
+  $('generated-posts').innerHTML=`<div class="generating"><div class="dot-anim"><span></span><span></span><span></span></div>Writing your posts...</div>`;
+  if(MOCK_MODE) {
+    await new Promise(r=>setTimeout(r,700));
+    renderTestPosts(MOCK_TEST_POSTS);
+    btn.textContent='Next →'; btn.disabled=false;
+    btn.onclick=()=>{ state.topics=Array.from(document.querySelectorAll('#topic-chips .chip.selected')).map(c=>c.textContent); $('final-topics').textContent=state.topics.length||4; goStep(5); };
+    return;
+  }
+  const hook = $('ob-hook').value || 'Great week with the team — best pipeline numbers yet';
+  state.hook = hook;
+  const topics = state.topics.length ? state.topics.join(', ') : 'sales leadership, SDR management';
+  const prompt = `You are a social media ghostwriter for ${state.name||'a sales leader'}, ${state.role||'Head of SDR'} at ${state.company||'a B2B SaaS company'}. Goal: ${state.goal||'thought leadership'}. Audience: ${state.audience||'sales leaders'}. Tone: ${state.tone||'Bold & direct'}. Topics: ${topics}.
+
+They just told you: "${hook}"
+
+Write 3 short social posts. Return ONLY valid JSON with no markdown or preamble:
+{"posts":[{"platform":"LinkedIn","style":"Story","body":"..."},{"platform":"X/Twitter","style":"Observation","body":"..."},{"platform":"LinkedIn","style":"Insight","body":"..."}]}`;
+
+  try {
+    const text = await groqChat(prompt, 900);
+    const clean = text.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const parsed = JSON.parse(clean);
+    renderTestPosts(parsed.posts);
+    btn.textContent='Next →'; btn.disabled=false;
+    btn.onclick=()=>{ state.topics=Array.from(document.querySelectorAll('#topic-chips .chip.selected')).map(c=>c.textContent); $('final-topics').textContent=state.topics.length||4; goStep(5); };
+  } catch(e) {
+    console.warn('Groq generateTestPosts failed, using mock:', e.message);
+    renderTestPosts(MOCK_TEST_POSTS);
+    btn.textContent='Next →'; btn.disabled=false;
+    btn.onclick=()=>goStep(5);
+  }
+}
+
+function renderTestPosts(posts) {
+  state.generatedPosts = posts;
+  let html='<div style="margin-top:1.1rem">';
+  posts.forEach((p,i)=>{
+    html+=`<div class="test-post-card" onclick="selectTestPost(${i},this)"><div class="platform-tag">${p.platform} · ${p.style}</div><div class="post-body">${p.body}</div></div>`;
+  });
+  $('generated-posts').innerHTML=html+'</div>';
+}
+
+function selectTestPost(i,el) {
+  document.querySelectorAll('.test-post-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); state.selectedPost=state.generatedPosts[i];
+}
+
+function openDashboard() {
+  $('onboarding').style.display='none'; $('splash').style.display='none'; $('dashboard').style.display='block';
+  const n=state.name||'Oli';
+  $('sb-avatar').textContent=n[0].toUpperCase();
+  $('sb-name').textContent=n+(state.role?` · ${state.role}`:'');
+  setGreeting(); buildCalendar(); buildQueue(); loadTodayPost(); loadInsight();
+}
+
+function setGreeting() {
+  const h=new Date().getHours();
+  const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  $('dash-greeting').textContent=`${g}, ${state.name||'Oli'} 👋`;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const d=new Date();
+  $('dash-date').textContent=`${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} · 3 posts this week`;
+}
+
+// ── CALENDAR ──
+function buildCalendar() {
+  const base=new Date(); base.setDate(1); base.setMonth(base.getMonth()+state.calOffset);
+  const year=base.getFullYear(), month=base.getMonth();
+  const today=new Date();
+  const isNow=today.getFullYear()===year&&today.getMonth()===month;
+  const names=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('cal-month-label').textContent=`${names[month]} ${year}`;
+  const dows=['M','T','W','T','F','S','S'];
+  let html=dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const offset=(firstDay+6)%7;
+  for(let i=0;i<offset;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday=isNow&&d===today.getDate();
+    const isSched=isNow&&CAL_DATA[d]&&!isToday;
+    const isOver=isNow&&OVERDUE.includes(d)&&!isToday;
+    const isSel=state.selectedCalDay===d;
+    let cls=isToday?'today':isSched?'scheduled':isOver?'overdue':'';
+    if(isSel&&!isToday) cls+=` selected-day`;
+    html+=`<div class="cal-day ${cls}" onclick="clickCal(${d})">${d}</div>`;
+  }
+  $('cal-grid').innerHTML=html;
+}
+
+function shiftCal(dir) { state.calOffset+=dir; state.selectedCalDay=null; $('cal-popover').classList.remove('open'); buildCalendar(); }
+
+function clickCal(d) {
+  const pop=$('cal-popover');
+  if(state.selectedCalDay===d){ state.selectedCalDay=null; pop.classList.remove('open'); buildCalendar(); return; }
+  state.selectedCalDay=d;
+  renderCalPopover(d);
+  pop.classList.add('open');
+  buildCalendar();
+}
+
+function renderCalPopover(d, editMode) {
+  const base=new Date(); base.setDate(1); base.setMonth(base.getMonth()+state.calOffset);
+  const isNow=new Date().getMonth()===base.getMonth()&&new Date().getFullYear()===base.getFullYear();
+  const monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  $('cal-pop-date').textContent=`${monthNames[base.getMonth()]} ${d}`;
+
+  const data=isNow?CAL_DATA[d]:null;
+  const tagsEl=$('cal-pop-tags');
+  const contentEl=$('cal-pop-content');
+
+  if(data){
+    const platCls=data.isX?'x':'li';
+    tagsEl.innerHTML=`<div class="cal-pop-tag ${platCls}">${data.platform}</div><div class="cal-pop-tag">${data.style}</div>`;
+
+    // track approved state per day
+    if(!state.calApproved) state.calApproved={};
+    const isApproved=state.calApproved[d];
+
+    if(isApproved){
+      contentEl.innerHTML=`
+        <div style="padding:0.7rem 0.875rem 0.875rem;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">✓ Approved</div>
+          <div style="font-size:12px;color:var(--muted)">Post is ready to go.</div>
+          <button class="cal-pop-btn copy" style="margin-top:8px;flex:none;width:100%" onclick="calCopy(${d})">Copy to clipboard</button>
+        </div>`;
+      return;
+    }
+
+    if(editMode){
+      contentEl.innerHTML=`
+        <textarea class="cal-pop-edit-area" id="cal-edit-ta-${d}">${data.full}</textarea>
+        <div class="cal-pop-actions">
+          <button class="cal-pop-btn approve" onclick="calSaveEdit(${d})">Save</button>
+          <button class="cal-pop-btn copy" onclick="renderCalPopover(${d},false)">Cancel</button>
+        </div>`;
+      return;
+    }
+
+    contentEl.innerHTML=`
+      <div class="cal-pop-body-text" id="cal-pop-body-${d}">${data.full}</div>
+      <div class="cal-pop-actions">
+        <button class="cal-pop-btn approve" onclick="calApprove(${d})">✓ Approve</button>
+        <button class="cal-pop-btn edit-btn" onclick="renderCalPopover(${d},true)">Edit</button>
+        <button class="cal-pop-btn regen" onclick="calRegen(${d})">↺ Regen</button>
+        <button class="cal-pop-btn copy" onclick="calCopy(${d})">Copy</button>
+      </div>`;
+
+  } else if(isNow&&OVERDUE.includes(d)){
+    tagsEl.innerHTML=`<div class="cal-pop-tag overdue">Overdue</div>`;
+    contentEl.innerHTML=`<div class="cal-pop-empty">This post was missed. Regenerate it to keep your streak going.</div>
+      <div class="cal-pop-actions" style="border-top:none;margin-top:0;padding-top:0">
+        <button class="cal-pop-btn regen" onclick="calRegenEmpty(${d})">↺ Regenerate post</button>
+      </div>`;
+  } else {
+    tagsEl.innerHTML='';
+    contentEl.innerHTML=`<div class="cal-pop-empty">No post scheduled for this day. You can add one from your queue.</div>`;
+  }
+}
+
+function calApprove(d) {
+  if(!state.calApproved) state.calApproved={};
+  state.calApproved[d]=true;
+  renderCalPopover(d);
+}
+
+function calSaveEdit(d) {
+  const ta=$(`cal-edit-ta-${d}`);
+  if(ta && CAL_DATA[d]) { CAL_DATA[d].full=ta.value; }
+  renderCalPopover(d, false);
+}
+
+function calCopy(d) {
+  const text=CAL_DATA[d]?.full||'';
+  navigator.clipboard?.writeText(text);
+  // brief feedback on the copy button
+  const btn=event.currentTarget;
+  const orig=btn.textContent; btn.textContent='Copied! ✓';
+  setTimeout(()=>{ btn.textContent=orig; },1500);
+}
+
+function calRegen(d) {
+  const btn=event.currentTarget; btn.textContent='...'; btn.disabled=true;
+  setTimeout(()=>{
+    // in mock mode, just shimmer the text briefly to simulate regen
+    const bodyEl=$(`cal-pop-body-${d}`);
+    if(bodyEl){ bodyEl.style.opacity='0.4'; setTimeout(()=>{ bodyEl.style.opacity='1'; btn.textContent='↺ Regen'; btn.disabled=false; },400); }
+    else { btn.textContent='↺ Regen'; btn.disabled=false; }
+  },600);
+}
+
+function calRegenEmpty(d) {
+  const btn=event.currentTarget; btn.textContent='Generating...'; btn.disabled=true;
+  setTimeout(()=>{
+    // Add a stub post to this overdue day
+    const idx=OVERDUE.indexOf(d); OVERDUE.splice(idx,1);
+    CAL_DATA[d]={ platform:'LinkedIn', isX:false, style:'Story', preview:'Regenerated post — ready for review', full:`This is a regenerated post for May ${d}.\n\nThe original was missed, but the show goes on.\n\nGood content doesn't care about perfect timing — it cares about consistency.` };
+    buildCalendar(); renderCalPopover(d);
+  },800);
+}
+
+// ── MODAL ──
+const modalState = { day: null, editMode: false };
+
+function openModal() {
+  const d = state.selectedCalDay;
+  if(!d) return;
+  const base = new Date(); base.setDate(1); base.setMonth(base.getMonth() + state.calOffset);
+  const isNow = new Date().getMonth() === base.getMonth() && new Date().getFullYear() === base.getFullYear();
+  const data = isNow ? CAL_DATA[d] : null;
+  if(!data) return;
+
+  modalState.day = d;
+  modalState.editMode = false;
+
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  $('modal-date-title').textContent = `${monthNames[base.getMonth()]} ${d}`;
+  $('modal-style-tag').textContent = data.style;
+
+  const badge = $('modal-platform-badge');
+  if(data.isX) {
+    badge.style.background = '#F3F3F3'; badge.style.color = '#111'; badge.textContent = 'X/Twitter';
+  } else {
+    badge.style.background = '#EBF4FF'; badge.style.color = 'var(--li-blue)'; badge.textContent = 'LinkedIn';
+  }
+
+  renderModalBody(d, false);
+  $('post-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderModalBody(d, editMode) {
+  modalState.editMode = editMode;
+  const data = CAL_DATA[d];
+  if(!data) return;
+
+  if(!state.calApproved) state.calApproved = {};
+  const isApproved = state.calApproved[d];
+
+  const body = $('modal-body');
+  const footer = $('modal-footer');
+
+  if(isApproved) {
+    body.innerHTML = `
+      <div class="modal-approved-state">
+        <div style="font-size:48px;margin-bottom:0.75rem">✅</div>
+        <h3>Post approved!</h3>
+        <p>Ready to copy and paste directly into LinkedIn.</p>
+        <div style="background:var(--green-light);border:1px solid rgba(22,163,74,0.2);border-radius:10px;padding:1rem;text-align:left;font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--text)">${data.full}</div>
+      </div>`;
+    footer.innerHTML = `
+      <button class="modal-btn copy" style="flex:2" onclick="modalCopy()">Copy to clipboard</button>
+      <button class="modal-btn edit" onclick="renderModalBody(${d},true)">Edit</button>`;
+    return;
+  }
+
+  if(editMode) {
+    body.innerHTML = `<textarea class="modal-edit-area" id="modal-edit-ta">${data.full}</textarea>`;
+    footer.innerHTML = `
+      <button class="modal-btn approve" onclick="modalSaveEdit(${d})">Save changes</button>
+      <button class="modal-btn copy" onclick="renderModalBody(${d},false)">Cancel</button>`;
+    setTimeout(() => { const ta = $('modal-edit-ta'); if(ta) ta.focus(); }, 50);
+    return;
+  }
+
+  body.innerHTML = `<div class="modal-post-text" id="modal-post-text">${data.full}</div>`;
+  footer.innerHTML = `
+    <button class="modal-btn approve-post" onclick="modalApproveAndPost()">✓ Approve + Post</button>
+    <button class="modal-btn edit" onclick="renderModalBody(${d},true)">Edit</button>
+    <button class="modal-btn regen" onclick="modalRegen()">↺ Regen</button>
+    <button class="modal-btn copy" onclick="modalCopy()">Copy</button>`;
+}
+
+function modalApprove() {
+  const d = modalState.day;
+  if(!state.calApproved) state.calApproved = {};
+  state.calApproved[d] = true;
+  renderModalBody(d, false);
+  // sync back to the inline popover
+  renderCalPopover(d, false);
+}
+
+function modalSaveEdit(d) {
+  const ta = $('modal-edit-ta');
+  if(ta && CAL_DATA[d]) CAL_DATA[d].full = ta.value;
+  renderModalBody(d, false);
+  renderCalPopover(d, false);
+}
+
+function modalRegen() {
+  const btn = event.currentTarget;
+  btn.textContent = '↺ ...'; btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '↺ Regen'; btn.disabled = false;
+    const body = $('modal-post-text'); if(body) { body.style.opacity='0.4'; setTimeout(()=>body.style.opacity='1', 300); }
+  }, 700);
+}
+
+function modalCopy() {
+  const d = modalState.day;
+  const text = CAL_DATA[d]?.full || '';
+  navigator.clipboard?.writeText(text);
+  const btn = event.currentTarget;
+  const orig = btn.textContent; btn.textContent = 'Copied! ✓';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+function closeModal() {
+  $('post-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleModalBackdropClick(e) {
+  if(e.target === $('post-modal')) closeModal();
+}
+
+// close on Escape
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+function buildQueue() {
+  let html='';
+  QUEUE_DATA.forEach((item,i)=>{
+    html+=`<div class="queue-item" id="qi-${i}" onclick="toggleQueue(${i})">
+      <div class="qi-header">
+        <div class="qi-day-label">${item.day}</div>
+        <div class="qi-plat${item.isX?' x-plat':''}">${item.isX?'𝕏':'in'} ${item.platform}</div>
+        <span class="qi-chevron" id="qi-chev-${i}">▾</span>
+      </div>
+      <div class="qi-preview">${item.preview}</div>
+      <div class="qi-body" id="qi-body-${i}">${item.full}</div>
+      <div class="qi-footer" id="qi-foot-${i}">
+        <button class="qi-btn approve" onclick="event.stopPropagation();qiApprove(${i})">✓ Approve</button>
+        <button class="qi-btn edit" onclick="event.stopPropagation()">Edit</button>
+      </div>
+    </div>`;
+  });
+  $('queue-list').innerHTML=html;
+}
+
+function toggleQueue(i) {
+  const body=$(`qi-body-${i}`), foot=$(`qi-foot-${i}`), chev=$(`qi-chev-${i}`), item=$(`qi-${i}`);
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.qi-body').forEach(e=>e.classList.remove('open'));
+  document.querySelectorAll('.qi-footer').forEach(e=>e.classList.remove('open'));
+  document.querySelectorAll('.qi-chevron').forEach(e=>e.classList.remove('open'));
+  document.querySelectorAll('.queue-item').forEach(e=>e.classList.remove('open'));
+  if(!isOpen){ body.classList.add('open'); foot.classList.add('open'); chev.classList.add('open'); item.classList.add('open'); }
+}
+
+function qiApprove(i) {
+  const item=$(`qi-${i}`);
+  item.style.opacity='0.4'; item.style.pointerEvents='none';
+  item.querySelector('.qi-preview').textContent='✓ Approved — ready to post';
+  $(`qi-body-${i}`).classList.remove('open');
+  $(`qi-foot-${i}`).classList.remove('open');
+  item.classList.remove('open');
+}
+
+// ── TODAY POST ──
+async function loadTodayPost() {
+  if(MOCK_MODE){ state.todayPost=MOCK_TODAY_POST; $('today-post-body').textContent=MOCK_TODAY_POST; return; }
+  const name=state.name||'Oli', role=state.role||'Head of SDR', company=state.company||'Pepper';
+  const topics=state.topics.length?state.topics.join(', '):'SDR coaching, pipeline strategy, sales leadership';
+  const tone=state.tone||'Bold & direct';
+  $('today-post-body').innerHTML=`<div class="generating"><div class="dot-anim"><span></span><span></span><span></span></div>Writing today\'s post...</div>`;
+  const prompt = `Write a single LinkedIn post for ${name}, ${role} at ${company}. Topics: ${topics}. Tone: ${tone}. Target: ${state.audience||'sales leaders and SDR managers'}.
+
+Write a story hook style post — 3-5 short paragraphs. Bold opening line. Specific and direct. No generic advice. Return ONLY the post text, no formatting, no preamble.`;
+  try {
+    const text = await groqChat(prompt, 600);
+    state.todayPost = text;
+    $('today-post-body').textContent = text;
+  } catch(e) {
+    console.warn('Groq loadTodayPost failed, using mock:', e.message);
+    state.todayPost = MOCK_TODAY_POST;
+    $('today-post-body').textContent = MOCK_TODAY_POST;
+  }
+}
+async function loadInsight() {
+  if(MOCK_MODE){ $('insight-bar').innerHTML=`<strong>✦ Insight:</strong> ${MOCK_INSIGHT}`; return; }
+  const topics=state.topics.length?state.topics.join(', '):'sales leadership';
+  const prompt=`Write a single 1-2 sentence content insight for a ${state.role||'Head of SDR'}\'s LinkedIn dashboard. Make it specific to their topics (${topics}). Example: "Story hook posts are getting 3x more engagement — your next post is set up for that format." Be data-flavoured and specific. Return only the insight text, no quotes.`;
+  try {
+    const text = await groqChat(prompt, 120);
+    $('insight-bar').innerHTML=`<strong>✦ Insight:</strong> ${text}`;
+  } catch(e) {
+    $('insight-bar').innerHTML=`<strong>✦ Insight:</strong> ${MOCK_INSIGHT}`;
+  }
+}
+
+function approvePost() {
+  $('today-post-wrap').innerHTML=`
+    <div class="approved-banner">
+      <h3>Post approved ✓</h3>
+      <p>Ready to copy and post to LinkedIn. Streak: ${parseInt($('streak-count').textContent)+1} days and counting.</p>
+      <button class="copy-btn" onclick="copyPost()">Copy to clipboard</button>
+    </div>`;
+  $('streak-count').textContent=parseInt($('streak-count').textContent)+1;
+  $('posts-month').textContent=parseInt($('posts-month').textContent)+1;
+}
+
+function copyPost() {
+  navigator.clipboard?.writeText(state.todayPost);
+  const btn=document.querySelector('.copy-btn');
+  if(btn){ btn.textContent='Copied! ✓'; }
+}
+
+function editPost() {
+  const body=$('today-post-body');
+  if(!state.editMode){
+    state.editMode=true;
+    const ta=document.createElement('textarea'); ta.className='edit-area'; ta.id='edit-textarea'; ta.value=state.todayPost;
+    body.replaceWith(ta); document.querySelector('.act-edit').textContent='Save';
+  } else {
+    state.editMode=false;
+    const ta=$('edit-textarea'); state.todayPost=ta.value;
+    const div=document.createElement('div'); div.className='post-card-body'; div.id='today-post-body'; div.textContent=state.todayPost;
+    ta.replaceWith(div); document.querySelector('.act-edit').textContent='Edit';
+  }
+}
+
+async function regenPost() {
+  const btn=document.querySelector('.act-regen'); btn.textContent='↺ ...'; btn.disabled=true;
+  state.todayPost='';
+  await loadTodayPost();
+  btn.textContent='↺ Regen'; btn.disabled=false;
+}
+
+
+
+// ═══════════════════════════════════════
+// QUEUE FEED
+// ═══════════════════════════════════════
+const FEED_DATA = [
+  { id:'f-a1', date:'Today', dateSort:0, platform:'linkedin', isX:false, status:'approved', topic:'SDR coaching', style:'Story', full:MOCK_TODAY_POST },
+  { id:'f-s1', date:'Tomorrow · May 8', dateSort:1, platform:'linkedin', isX:false, status:'scheduled', topic:'Cold outreach', style:'Story', full:`The cold email mistake everyone makes — and how to stop it.\n\nMost cold emails talk about the sender, not the reader.\n\n"We help companies like yours..." — who cares? You haven't earned that yet.\n\nStart with their world. Reference something specific. Make them feel seen.\n\nThen — and only then — tell them what you do.` },
+  { id:'f-s2', date:'Wed · May 8', dateSort:1, platform:'x', isX:true, status:'scheduled', topic:'Sales leadership', style:'Observation', full:`SDR metrics that actually matter vs ones that sound good.\n\nMatters: Pipeline created, SAO rate, avg deal size sourced.\nSounds good: Dials, emails sent, activities logged.\n\nYour CRO doesn't care how busy your team looks.` },
+  { id:'f-s3', date:'Thu · May 9', dateSort:2, platform:'linkedin', isX:false, status:'scheduled', topic:'Pipeline strategy', style:'Story', full:`What 3 months of multi-threading taught me about patience.\n\nWe touched 6 stakeholders before the deal closed. Some took 8 follow-ups. One ghosted for 3 weeks and came back with budget.\n\nThe rep who wanted to "just move on" after week 4 — he's glad he didn't.` },
+  { id:'f-s4', date:'Fri · May 10', dateSort:3, platform:'linkedin', isX:false, status:'scheduled', topic:'Sales leadership', style:'Insight', full:`Pipeline is a lagging indicator. Here's what I actually watch.\n\nBy the time pipeline looks bad, it's already too late.\n\nI watch: ICP account coverage, meaningful conversation rate, and rep response time on inbound signals.\n\nThose three numbers predict pipeline 6 weeks out.` },
+  { id:'f-s5', date:'Mon · May 12', dateSort:4, platform:'x', isX:true, status:'scheduled', topic:'SDR coaching', style:'Observation', full:`Hot take: the SDR to AE handoff is where most deals die.\n\nNot bad prospecting. Not bad demos. The handoff.\n\nFix your internal communication before blaming the market.` },
+  { id:'f-d1', date:'May 14', dateSort:5, platform:'linkedin', isX:false, status:'draft', topic:'Pipeline strategy', style:'Story', full:`Most sales leaders track the wrong pipeline metric. Here's what actually predicts your quarter...` },
+  { id:'f-d2', date:'May 16', dateSort:6, platform:'x', isX:true, status:'draft', topic:'Cold outreach', style:'Observation', full:`A cold email that opens with "I hope this finds you well" has already lost. Here's why...` },
+  { id:'f-p1', date:'May 5', dateSort:-2, platform:'linkedin', isX:false, status:'posted', topic:'Sales leadership', style:'Story', full:`Why I hire for curiosity over experience in SDR roles.\n\nI've interviewed hundreds of SDR candidates. The ones who stand out aren't the ones with the best CV.\n\nThey're the ones who ask the best questions.` },
+  { id:'f-p2', date:'May 2', dateSort:-3, platform:'linkedin', isX:false, status:'posted', topic:'Pipeline strategy', style:'Insight', full:`The pipeline metric everyone ignores: ICP account coverage.\n\nEvery team tracks pipeline created. Almost no team tracks what percentage of their Tier 1 ICP accounts have had a meaningful conversation in the last 90 days.` },
+];
+
+let feedFilter = 'all';
+const expandedCards = new Set();
+
+function buildFeed() {
+  const feed = $('queue-feed');
+  let items = [...FEED_DATA];
+  if(feedFilter !== 'all') items = items.filter(i => i.status === feedFilter);
+  items.sort((a,b) => a.dateSort - b.dateSort);
+
+  // group by status for label dividers
+  const groups = {};
+  items.forEach(i => { if(!groups[i.status]) groups[i.status] = []; groups[i.status].push(i); });
+  const order = ['approved','scheduled','draft','posted'];
+  const labels = { approved:'✓ Approved — ready to post', scheduled:'Scheduled', draft:'Drafts', posted:'Posted' };
+
+  let html = '';
+  order.forEach(status => {
+    const grp = groups[status];
+    if(!grp||!grp.length) return;
+    if(feedFilter==='all') html += `<div class="feed-date-divider">${labels[status]}</div>`;
+    grp.forEach(card => { html += renderFeedCard(card); });
+  });
+
+  if(!html) html = `<div style="text-align:center;padding:3rem;color:var(--faint);font-size:14px">No posts in this filter</div>`;
+  feed.innerHTML = html;
+
+  // update sub count
+  const total = feedFilter==='all' ? FEED_DATA.length : FEED_DATA.filter(i=>i.status===feedFilter).length;
+  $('queue-sub').textContent = `${total} post${total!==1?'s':''} ${feedFilter==='all'?'total':'in this filter'}`;
+}
+
+function renderFeedCard(c) {
+  const isExpanded = expandedCards.has(c.id);
+  const platCls = c.isX ? 'x' : 'li';
+  const platLabel = c.isX ? '𝕏 X/Twitter' : '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--li-blue)" style="vertical-align:-1px"><path d="M20.447 20.452h-3.554v-5.569c0-1.327-.024-3.037-1.852-3.037-1.851 0-2.132 1.445-2.132 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> LinkedIn';
+  const statusLabels = { draft:'Draft', scheduled:'Scheduled', approved:'Approved', posted:'Posted' };
+  const approvedCls = c.status==='approved' ? 'fc-approved' : '';
+  const postedCls = c.status==='posted' ? 'fc-posted' : '';
+
+  const actions = c.status === 'posted'
+    ? `<button class="fc-btn posted-btn" disabled>✓ Posted · ${c.date}</button>
+       <button class="fc-btn edit" onclick="fcEdit('${c.id}')">Edit</button>`
+    : `<button class="fc-btn approve-post" onclick="fcApprovePost('${c.id}')">✓ Approve + Post</button>
+       <button class="fc-btn edit" onclick="fcEdit('${c.id}')">Edit</button>
+       <button class="fc-btn regen" onclick="fcRegen('${c.id}')">↺ Regen</button>`;
+
+  return `<div class="feed-card ${approvedCls} ${postedCls}" id="fc-${c.id}">
+    <div class="feed-card-header">
+      <div class="fc-plat-badge ${platCls}">${platLabel}</div>
+      <div class="fc-style-tag">${c.style}</div>
+      <div class="fc-status ${c.status}">${statusLabels[c.status]}</div>
+      <div style="font-size:11px;color:var(--faint);font-family:'DM Mono',monospace;margin-left:8px">${c.date}</div>
+    </div>
+    <div class="fc-topic">${c.topic}</div>
+    <div class="feed-card-body ${isExpanded?'expanded':''}" id="fcb-${c.id}">${c.full}</div>
+    <button class="feed-card-expand" onclick="toggleFeedExpand('${c.id}')">${isExpanded?'Show less ↑':'Read more ↓'}</button>
+    <div class="feed-card-actions">${actions}</div>
+  </div>`;
+}
+
+function filterFeed(f, el) {
+  feedFilter = f;
+  document.querySelectorAll('#page-queue .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  buildFeed();
+}
+
+function toggleFeedExpand(id) {
+  if(expandedCards.has(id)) expandedCards.delete(id); else expandedCards.add(id);
+  buildFeed();
+}
+
+function fcApprovePost(id) {
+  const card = FEED_DATA.find(c=>c.id===id);
+  if(!card) return;
+  card.status = 'posted';
+  approveAndPost(card.isX?'x':'linkedin', card.full);
+  buildFeed();
+}
+
+function fcEdit(id) {
+  const card = FEED_DATA.find(c=>c.id===id);
+  if(!card) return;
+  const bodyEl = $(`fcb-${id}`);
+  if(!bodyEl) return;
+  const ta = document.createElement('textarea');
+  ta.style.cssText='width:100%;border:1.5px solid var(--accent);border-radius:9px;padding:10px 13px;font-family:Plus Jakarta Sans,sans-serif;font-size:13px;line-height:1.8;resize:vertical;min-height:120px;background:var(--white);';
+  ta.value = card.full;
+  bodyEl.replaceWith(ta);
+  ta.id=`fcb-${id}`;
+  ta.onblur=()=>{ card.full=ta.value; buildFeed(); };
+  ta.focus();
+}
+
+function fcRegen(id) {
+  const card = FEED_DATA.find(c=>c.id===id);
+  if(!card) return;
+  const bodyEl = $(`fcb-${id}`);
+  if(bodyEl){ bodyEl.style.opacity='0.3'; setTimeout(()=>{ bodyEl.style.opacity='1'; },600); }
+}
+
+function addFeedPost() {
+  const id='new-'+Date.now();
+  FEED_DATA.unshift({ id:`f-${id}`, date:'TBD', dateSort:-99, platform:'linkedin', isX:false, status:'draft', topic:'Sales leadership', style:'Story', full:'New draft — click Edit to write it.' });
+  buildFeed();
+}
+
+// ═══════════════════════════════════════
+// FULL CALENDAR (with drag-drop)
+// ═══════════════════════════════════════
+let fullCalOffset = 0;
+let fullCalFilter = 'all';
+let calDragDay = null;
+
+function buildFullCalendar() {
+  const base = new Date(); base.setDate(1); base.setMonth(base.getMonth() + fullCalOffset);
+  const year = base.getFullYear(), month = base.getMonth();
+  const today = new Date();
+  const isNow = today.getFullYear()===year && today.getMonth()===month;
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('full-cal-title').textContent = `${months[month]} ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const offset = (firstDay+6)%7;
+  let html = '';
+
+  for(let i=0;i<offset;i++) html+=`<div class="full-cal-cell empty-cell"></div>`;
+
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday = isNow && d===today.getDate();
+    const data = isNow ? CAL_DATA[d] : null;
+    const isOver = isNow && OVERDUE.includes(d) && !isToday;
+    const isApproved = state.calApproved && state.calApproved[d];
+
+    let cellCls = 'full-cal-cell';
+    if(isToday) cellCls += ' today';
+    if(data) cellCls += ' has-post';
+    if(isOver) cellCls += ' overdue-cell';
+
+    let filteredOut = false;
+    if(fullCalFilter==='linkedin' && data && data.isX) filteredOut=true;
+    if(fullCalFilter==='x' && data && !data.isX) filteredOut=true;
+    if(fullCalFilter==='approved' && !isApproved) filteredOut=true;
+    if(fullCalFilter==='overdue' && !isOver) filteredOut=true;
+    if(fullCalFilter==='overdue' && isOver) filteredOut=false;
+    if(filteredOut) cellCls += ' filtered-out';
+
+    const numCls = 'fcc-num' + (isToday?' today-num':'');
+    const todayDot = isToday ? `<div class="fcc-today-dot"></div>` : '';
+    let chipHtml = '';
+    if(data){
+      const chipCls = isApproved?'approved-chip':data.isX?'x-chip':'li-chip';
+      const platLabel = data.isX ? '𝕏' : 'in';
+      chipHtml = `<div class="fcc-post-chip ${chipCls}">${platLabel} ${data.style}</div><div class="fcc-preview">${data.preview}</div>`;
+    } else if(isOver){
+      chipHtml = `<div class="fcc-post-chip overdue-chip">⚠ Missed</div>`;
+    }
+
+    const draggable = data ? 'draggable="true" ondragstart="calDragStart(event,'+d+')" ondragend="calDragEnd(event)"' : '';
+
+    html += `<div class="${cellCls}" ${draggable}
+      onclick="fullCalClick(${d})"
+      ondragover="event.preventDefault();this.classList.add('drag-target')"
+      ondragleave="this.classList.remove('drag-target')"
+      ondrop="calDrop(event,${d})">
+      <div class="${numCls}"><span>${d}</span>${todayDot}</div>
+      ${chipHtml}
+    </div>`;
+  }
+  $('full-cal-cells').innerHTML = html;
+}
+
+function shiftFullCal(dir) { fullCalOffset+=dir; buildFullCalendar(); }
+
+function filterCal(f, el) {
+  fullCalFilter=f;
+  document.querySelectorAll('#page-calendar .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  buildFullCalendar();
+}
+
+function fullCalClick(d) {
+  state.selectedCalDay = d;
+  state.calOffset = fullCalOffset;
+  openModal();
+}
+
+function calDragStart(e, d) {
+  calDragDay = d;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(()=>{ const cells=document.querySelectorAll('.full-cal-cell'); cells.forEach(c=>{if(parseInt(c.textContent)===d) c.style.opacity='0.4';}); },0);
+}
+function calDragEnd(e) {
+  document.querySelectorAll('.full-cal-cell').forEach(c=>{ c.style.opacity=''; c.classList.remove('drag-target'); });
+}
+function calDrop(e, toDay) {
+  e.preventDefault();
+  document.querySelectorAll('.full-cal-cell').forEach(c=>c.classList.remove('drag-target'));
+  if(!calDragDay || calDragDay===toDay) return;
+  const fromData = CAL_DATA[calDragDay];
+  if(!fromData) return;
+  // move the post to the new day
+  CAL_DATA[toDay] = { ...fromData };
+  delete CAL_DATA[calDragDay];
+  if(state.calApproved) {
+    if(state.calApproved[calDragDay]) { state.calApproved[toDay]=true; delete state.calApproved[calDragDay]; }
+  }
+  calDragDay = null;
+  buildFullCalendar();
+  showToast('📅','Post rescheduled',`Moved to May ${toDay}`);
+}
+
+
+// ═══════════════════════════════════════
+// VOICE & STYLE
+// ═══════════════════════════════════════
+const voiceSettings = {
+  tone:25, length:60, story:40, prov:65,
+  bold_hook:true, short_para:true, rhetorical:false, cta:true, personal:true,
+  hashtags:false, maxTags:3, emojis:false, postLength:'medium'
+};
+
+const SLIDER_LABELS = {
+  tone: [[0,20,'Formal'],[21,40,'Mostly formal'],[41,60,'Balanced'],[61,80,'Conversational'],[81,100,'Very conversational']],
+  length: [[0,20,'Very short'],[21,40,'Short'],[41,60,'Balanced'],[61,80,'Detailed'],[81,100,'Long-form']],
+  story: [[0,20,'Data-driven'],[21,40,'Evidence-based'],[41,60,'Balanced'],[61,80,'Story-driven'],[81,100,'All stories']],
+  prov: [[0,20,'Very safe'],[21,40,'Measured'],[41,60,'Balanced'],[61,80,'Slightly provocative'],[81,100,'Provocative']],
+};
+const SLIDER_KEYS = ['tone','length','story','prov'];
+const SLIDER_VAL_IDS = ['tone-val','length-val','story-val','prov-val'];
+
+function updateSliderLabel(el, valId) {
+  const idx = Array.from(document.querySelectorAll('.voice-slider')).indexOf(el);
+  const key = SLIDER_KEYS[idx];
+  const v = parseInt(el.value);
+  voiceSettings[key] = v;
+  const labels = SLIDER_LABELS[key];
+  const label = labels.find(([lo,hi])=>v>=lo&&v<=hi);
+  $(valId).textContent = label ? label[2] : '';
+}
+
+function toggleVoiceFeature(row) {
+  const sw = row.querySelector('.toggle-switch');
+  if(!sw) return;
+  sw.classList.toggle('active');
+  const key = sw.dataset.key;
+  voiceSettings[key] = sw.classList.contains('active');
+  // show/hide hashtag options
+  if(key==='hashtags') {
+    $('hashtag-options').style.display = voiceSettings.hashtags ? 'block' : 'none';
+  }
+}
+
+function selectMaxTags(n, el) {
+  voiceSettings.maxTags=n;
+  document.querySelectorAll('#hashtag-options .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectLength(len, el) {
+  voiceSettings.postLength=len;
+  document.querySelectorAll('#page-voice .filter-chip-group:last-of-type .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+let voiceSampleCount = 1;
+function addVoiceSample() {
+  if(voiceSampleCount>=3){ $('add-sample-btn').style.display='none'; return; }
+  const id = voiceSampleCount++;
+  const div=document.createElement('div'); div.className='voice-sample-row'; div.id=`vs-${id}`;
+  div.innerHTML=`<textarea class="voice-sample-ta" placeholder="Paste another real post…" oninput="analyseVoiceSample(${id},this)"></textarea><div class="voice-sample-analysis" id="vsa-${id}" style="display:none"></div>`;
+  $('voice-samples-list').appendChild(div);
+  if(voiceSampleCount>=3) $('add-sample-btn').style.display='none';
+}
+
+function analyseVoiceSample(i, ta) {
+  const analysis = $(`vsa-${i}`);
+  if(!analysis) return;
+  const text = ta.value.trim();
+  if(text.length < 60){ analysis.style.display='none'; return; }
+  // Simple heuristic analysis (would be AI-powered with API on)
+  const sentences = text.split(/[.!?]+/).filter(s=>s.trim().length>0);
+  const avgLen = Math.round(text.split(' ').length / Math.max(sentences.length,1));
+  const hasQuestion = text.includes('?');
+  const hasNumbers = /\d/.test(text);
+  const lines = text.split('\n').filter(l=>l.trim());
+  const shortLines = lines.filter(l=>l.split(' ').length<=8).length;
+  const style = shortLines > lines.length*0.5 ? 'short punchy sentences' : 'flowing paragraphs';
+  const tone = text.match(/\bI\b|\bmy\b|\bme\b/gi)?.length > 3 ? 'personal and first-person' : 'more detached';
+  analysis.style.display='block';
+  analysis.innerHTML=`<strong>✦ Pattern detected:</strong> You write in ${style}, avg ~${avgLen} words/sentence. Tone feels ${tone}.${hasQuestion?' Ends with a question — good engagement hook.':''}${hasNumbers?' Uses data/numbers for credibility.':''} Cadence will apply this style to your posts.`;
+}
+
+function saveVoice() {
+  const btn = document.querySelector('#page-voice .page-action-btn');
+  if(btn){ btn.textContent='Saved ✓'; btn.style.background='var(--green)'; setTimeout(()=>{ btn.textContent='Save changes'; btn.style.background=''; },2000); }
+}
+
+
+const platforms = { linkedin: '', x: '' };
+
+function savePlatform() {
+  const li = $('li-url')?.value?.trim() || '';
+  const x  = $('x-handle')?.value?.trim() || '';
+  platforms.linkedin = li;
+  platforms.x = x;
+  const liStatus = $('li-status');
+  const xStatus  = $('x-status');
+  if(liStatus) { liStatus.textContent = li ? '✓ Connected' : '● Not set up'; liStatus.className = 'settings-status-badge' + (li?' connected':''); }
+  if(xStatus)  { xStatus.textContent  = x  ? '✓ Connected' : '● Not set up'; xStatus.className  = 'settings-status-badge' + (x ?' connected':''); }
+}
+
+function approveAndPost(platformHint, text) {
+  // copy text to clipboard
+  navigator.clipboard?.writeText(text || state.todayPost || '');
+
+  // determine platform: X uses tweet intent (text pre-fills), LinkedIn opens compose
+  const isX = platformHint === 'x';
+  let url, toastDesc;
+
+  if(isX) {
+    const encoded = encodeURIComponent((text || state.todayPost || '').substring(0, 270));
+    url = `https://twitter.com/intent/tweet?text=${encoded}`;
+    toastDesc = 'Opening X — text is pre-filled, just click Tweet';
+  } else {
+    url = 'https://www.linkedin.com/feed/?shareActive=true';
+    toastDesc = 'Opening LinkedIn — paste (⌘V) into the compose box, then click Post';
+  }
+
+  // update streak + posts count
+  const streakEl = $('streak-count');
+  const postsEl  = $('posts-month');
+  if(streakEl) streakEl.textContent = parseInt(streakEl.textContent) + 1;
+  if(postsEl)  postsEl.textContent  = parseInt(postsEl.textContent) + 1;
+
+  // show toast
+  showToast(isX ? '𝕏' : '💼', 'Text copied — opening platform', toastDesc);
+
+  // open tab after short delay so toast is visible first
+  setTimeout(() => window.open(url, '_blank'), 400);
+}
+
+function showToast(icon, title, desc) {
+  const t = $('post-toast');
+  $('toast-icon').textContent = icon;
+  $('toast-title').textContent = title;
+  $('toast-desc').textContent = desc;
+  t.style.display = 'flex';
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(hideToast, 6000);
+}
+
+function hideToast() {
+  const t = $('post-toast');
+  t.style.display = 'none';
+  t.classList.remove('show');
+}
+
+// ── MODAL APPROVE+POST ──
+function modalApproveAndPost() {
+  const d = modalState.day;
+  const data = d ? CAL_DATA[d] : null;
+  const text = data ? data.full : state.todayPost;
+  const platform = data?.isX ? 'x' : 'linkedin';
+
+  // mark approved
+  if(d) {
+    if(!state.calApproved) state.calApproved = {};
+    state.calApproved[d] = true;
+    renderCalPopover(d, false);
+  }
+
+  approveAndPost(platform, text);
+
+  // update modal footer to show posted state
+  const footer = $('modal-footer');
+  if(footer) footer.innerHTML = `
+    <button class="modal-btn approve-post" style="opacity:0.6;cursor:default" disabled>✓ Posted</button>
+    <button class="modal-btn copy" onclick="modalCopy()">Copy again</button>
+    <button class="modal-btn edit" onclick="renderModalBody(${d||0},true)">Edit</button>`;
+}
+
+// also wire approvePost (today card) to approveAndPost
+function approvePost() {
+  const platform = 'linkedin'; // today's card is always LinkedIn
+  approveAndPost(platform, state.todayPost);
+  $('today-post-wrap').innerHTML = `
+    <div class="approved-banner">
+      <h3>Opening LinkedIn ✓</h3>
+      <p>Text copied to clipboard — paste into the compose box and click Post.</p>
+      <button class="copy-btn" onclick="navigator.clipboard?.writeText(state.todayPost);this.textContent='Copied! ✓'">Copy again</button>
+    </div>`;
+}
+
+
+const ALL_PAGES = ['today','queue','calendar','voice','platforms','team','settings'];
+const _pageInited = {};
+function setPage(page, el) {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  ALL_PAGES.forEach(p=>{
+    const el=$(`page-${p}`); if(!el) return;
+    el.style.display='none'; el.classList.remove('visible');
+  });
+  const target=$(`page-${page}`);
+  if(!target) return;
+  if(page==='today'){ target.style.display='block'; }
+  else if(page==='team'){ target.style.display='block'; buildLeaderboard(); }
+  else if(page==='queue'){
+    target.style.display='block';
+    buildFeed();
+  }
+  else if(page==='calendar'){
+    target.style.display='block';
+    if(!_pageInited.calendar){ _pageInited.calendar=true; }
+    buildFullCalendar();
+  }
+  else if(page==='voice'){ target.style.display='block'; }
+  else if(page==='settings'){
+    target.style.display='block';
+    if($('li-url')) $('li-url').value = platforms.linkedin;
+    if($('x-handle')) $('x-handle').value = platforms.x;
+    if($('settings-name')) $('settings-name').value = state.name || '';
+    if($('settings-role')) $('settings-role').value = state.role || '';
+    if($('settings-company')) $('settings-company').value = state.company || '';
+    savePlatform();
+  }
+  else { target.style.display='flex'; target.classList.add('visible'); }
+}
+
+// ── CHECKLIST ──
+const checkState = [false,false,false,false,false];
+function toggleCheck(i) {
+  checkState[i] = !checkState[i];
+  const item=$(`ci-${i}`), circle=$(`cic-${i}`);
+  item.classList.toggle('done', checkState[i]);
+  const done = checkState.filter(Boolean).length;
+  $('checklist-pct').textContent = `${done} / 5 done`;
+  $('checklist-fill').style.width = `${done/5*100}%`;
+}
+
+// ── LEADERBOARD ──
+const LB_DATA = [
+  { name:'Kirk Horton', posts:12, streak:7, pct:100, color:'#FF5C35' },
+  { name:'Brandon Laughlin', posts:10, streak:5, pct:83, color:'#7C4DFF' },
+  { name:'Oli Elliott', posts:9, streak:3, pct:75, color:'#0EA47A' },
+  { name:'Davis Payer', posts:7, streak:4, pct:58, color:'#D97706' },
+  { name:'Charlotte Mungovan', posts:5, streak:2, pct:42, color:'#0A66C2' },
+  { name:'Lucas Heldman', posts:4, streak:1, pct:33, color:'#9333EA' },
+];
+function buildLeaderboard() {
+  const el=$('leaderboard-rows'); if(!el||el.innerHTML) return;
+  const medals=['🥇','🥈','🥉'];
+  el.innerHTML = LB_DATA.map((r,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);${i===LB_DATA.length-1?'border-bottom:none':''}">
+      <div style="width:22px;text-align:center;font-size:${i<3?'16px':'12px'};color:var(--faint);font-family:'DM Mono',monospace;font-weight:700">${i<3?medals[i]:i+1}</div>
+      <div style="width:30px;height:30px;border-radius:50%;background:${r.color};color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${r.name[0]}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;${r.name==='Oli Elliott'?'color:var(--accent)':''}">${r.name}${r.name==='Oli Elliott'?' (you)':''}</div>
+        <div style="height:4px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden"><div style="height:100%;background:linear-gradient(90deg,${r.color},${r.color}99);width:${r.pct}%;border-radius:2px"></div></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace">${r.posts}</div>
+        <div style="font-size:10px;color:var(--faint)">🔥${r.streak}d</div>
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
