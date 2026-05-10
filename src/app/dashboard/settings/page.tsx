@@ -108,7 +108,7 @@ export default function SettingsPage() {
   const [postsPerDay, setPostsPerDay]         = useState(1)
   const [activeDays, setActiveDays]           = useState<number[]>([1,2,3,4,5]) // Mon-Fri
   const [platformAlloc, setPlatformAlloc]     = useState<Record<PlatformKey, number>>({ linkedin: 1, x: 0, instagram: 0, facebook: 0, tiktok: 0 })
-  const [enabledPlatforms, setEnabledPlatforms] = useState<Set<PlatformKey>>(new Set(['linkedin']))
+  const [enabledPlatforms, setEnabledPlatforms] = useState<Set<PlatformKey>>(new Set<PlatformKey>(['linkedin']))
 
   // Platform connections
   const [li, setLi]     = useState('')
