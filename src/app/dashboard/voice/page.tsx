@@ -117,6 +117,35 @@ export default function VoicePage() {
       <div className="p-6 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
+          {/* ── Voice profile — TOP ── */}
+          <div className="lg:col-span-2 bg-gradient-to-br from-accent-light to-violet-50 border border-accent/15 rounded-2xl p-5">
+            <div className="text-sm font-bold text-text mb-1">✦ Your current voice profile</div>
+            <div className="text-xs text-muted mb-3">Updates live as you change settings below</div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: 'Tone', value: getLabel('tone', settings.tone) },
+                { label: 'Length', value: getLabel('length', settings.length) },
+                { label: 'Style', value: getLabel('story', settings.story) },
+                { label: 'Edge', value: getLabel('provocative', settings.provocative) },
+                settings.boldHook && { label: '✓', value: 'Bold hook' },
+                settings.shortParagraphs && { label: '✓', value: 'Short paras' },
+                settings.endWithCta && { label: '✓', value: 'Ends with CTA' },
+                settings.personalStories && { label: '✓', value: 'Personal stories' },
+                settings.hashtags && { label: '#', value: `Up to ${settings.maxHashtags} hashtags` },
+                settings.emojis && { label: '✓', value: 'Emojis on' },
+                { label: '↔', value: `${settings.postLength.charAt(0).toUpperCase() + settings.postLength.slice(1)} posts` },
+              ].filter(Boolean).map((item, i) => {
+                const { label, value } = item as { label: string; value: string }
+                return (
+                  <div key={i} className="flex items-center gap-1.5 bg-white border border-border rounded-full px-3 py-1.5 text-xs">
+                    <span className="font-bold text-accent">{label}</span>
+                    <span className="text-muted">{value}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
           {/* ── Writing DNA ── */}
           <div className="lg:col-span-2 bg-white border border-border rounded-2xl p-5 shadow-sm">
             <div className="mb-4">
@@ -247,34 +276,6 @@ export default function VoicePage() {
                 + Add another sample
               </button>
             )}
-          </div>
-
-          {/* ── Preview ── */}
-          <div className="lg:col-span-2 bg-gradient-to-br from-accent-light to-violet-50 border border-accent/15 rounded-2xl p-5">
-            <div className="text-sm font-bold text-text mb-3">✦ Your current voice profile</div>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: 'Tone', value: getLabel('tone', settings.tone) },
-                { label: 'Length', value: getLabel('length', settings.length) },
-                { label: 'Style', value: getLabel('story', settings.story) },
-                { label: 'Edge', value: getLabel('provocative', settings.provocative) },
-                settings.boldHook && { label: '✓', value: 'Bold hook' },
-                settings.shortParagraphs && { label: '✓', value: 'Short paras' },
-                settings.endWithCta && { label: '✓', value: 'Ends with CTA' },
-                settings.personalStories && { label: '✓', value: 'Personal stories' },
-                settings.hashtags && { label: '#', value: `Up to ${settings.maxHashtags} hashtags` },
-                settings.emojis && { label: '✓', value: 'Emojis on' },
-                { label: '↔', value: `${settings.postLength.charAt(0).toUpperCase() + settings.postLength.slice(1)} posts` },
-              ].filter(Boolean).map((item, i) => {
-                const { label, value } = item as { label: string; value: string }
-                return (
-                  <div key={i} className="flex items-center gap-1.5 bg-white border border-border rounded-full px-3 py-1.5 text-xs">
-                    <span className="font-bold text-accent">{label}</span>
-                    <span className="text-muted">{value}</span>
-                  </div>
-                )
-              })}
-            </div>
           </div>
 
         </div>

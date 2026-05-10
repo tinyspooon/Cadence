@@ -30,11 +30,20 @@ export default function TodayPost({ userId }: { userId: string }) {
   async function loadPost() {
     setLoading(true)
     try {
-      const prompt = buildPostPrompt({
-        ...DEMO_PROFILE,
-        hook: 'Building the next generation of SDR teams at Pepper',
-        style: 'story',
-      })
+      const prompt = `You are ghostwriting a LinkedIn post for ${DEMO_PROFILE.name}, ${DEMO_PROFILE.role} at ${DEMO_PROFILE.company}.
+
+VOICE: ${DEMO_PROFILE.tone}. Write in first person. Be direct and specific. No corporate speak. No generic advice.
+
+TOPIC: Pick one from ${DEMO_PROFILE.topics.join(', ')}. Write about something specific and real — a lesson learned, a mistake made, a pattern noticed, or a contrarian take.
+
+FORMAT:
+- Start with a single bold hook line that stops the scroll
+- One sentence per paragraph, max 3-4 paragraphs
+- Total length: 80-120 words
+- No hashtags, no emojis
+- End with either a specific observation or a short question
+
+Return ONLY the post text. No preamble, no quotes, no "Here's a post:"`
       const text = await generate(prompt, { maxTokens: 600 })
       setPost(text)
     } catch (e) {
