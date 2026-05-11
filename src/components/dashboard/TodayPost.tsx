@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils'
 
 // Placeholder profile — will come from Supabase once wired
 const DEMO_PROFILE = {
-  name: 'Oli',
-  role: 'Head of SDR',
-  company: 'Pepper',
+  name: 'Alex',
+  role: 'VP of Sales',
+  company: 'Arcflow',
   goal: 'Thought leadership',
   audience: 'Sales leaders and SDR managers',
   tone: 'Bold & direct',

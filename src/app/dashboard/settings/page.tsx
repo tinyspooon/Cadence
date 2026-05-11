@@ -104,7 +104,12 @@ export default function SettingsPage() {
   const [role, setRole]       = useState('')
   const [company, setCompany] = useState('')
 
-  // Posting schedule
+  // Company context
+  const [companyOneLiner, setOneLiner]   = useState('')
+  const [problemSolved, setProblem]      = useState('')
+  const [targetCustomer, setTarget]      = useState('')
+  const [differentiator, setDiff]        = useState('')
+  const [contentMix, setContentMix]      = useState(80) // 80 = 80% thought leadership, 20% product
   const [postsPerDay, setPostsPerDay]         = useState(1)
   const [activeDays, setActiveDays]           = useState<number[]>([1,2,3,4,5]) // Mon-Fri
   const [platformAlloc, setPlatformAlloc]     = useState<Record<PlatformKey, number>>({ linkedin: 1, x: 0, instagram: 0, facebook: 0, tiktok: 0 })
@@ -199,6 +204,75 @@ export default function SettingsPage() {
             <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Company</label>
             <input type="text" value={company} onChange={e => setCompany(e.target.value)} placeholder="Pepper"
               className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+          </div>
+        </SettingsCard>
+
+        {/* ── Company context ── */}
+        <SettingsCard
+          icon={<div className="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center">
+            <svg className="w-5 h-5 text-violet-600" viewBox="0 0 20 20" fill="none">
+              <rect x="3" y="6" width="14" height="11" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M7 6V5a3 3 0 016 0v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </div>}
+          title="Company context"
+          desc="Cadence uses this to weave your product naturally into posts — when relevant"
+        >
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">One-liner description</label>
+              <input type="text" value={companyOneLiner} onChange={e => setOneLiner(e.target.value)}
+                placeholder="e.g. Pepper is AI-powered order management for food distributors"
+                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Problem you solve</label>
+              <textarea value={problemSolved} onChange={e => setProblem(e.target.value)} rows={2}
+                placeholder="e.g. Independent food distributors are stuck on phone orders and spreadsheets — losing customers to faster competitors"
+                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all resize-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Target customer</label>
+              <input type="text" value={targetCustomer} onChange={e => setTarget(e.target.value)}
+                placeholder="e.g. Independent food & beverage distributors with 10-100 employees"
+                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Key differentiator</label>
+              <input type="text" value={differentiator} onChange={e => setDiff(e.target.value)}
+                placeholder="e.g. The only platform built specifically for independent distributors — not adapted from enterprise software"
+                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+            </div>
+          </div>
+
+          {/* Content mix slider */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <div className="text-sm font-semibold text-text">Content mix</div>
+                <div className="text-xs text-faint">How often should posts mention your product?</div>
+              </div>
+              <div className="text-xs font-bold text-accent font-mono">
+                {contentMix}% thought leadership · {100 - contentMix}% product
+              </div>
+            </div>
+            <input type="range" min={50} max={95} step={5} value={contentMix}
+              onChange={e => setContentMix(parseInt(e.target.value))}
+              className="w-full h-1.5 rounded-full cursor-pointer" style={{ accentColor: '#FF5C35' }} />
+            <div className="flex justify-between text-[10px] text-faint mt-1.5">
+              <span>Pipeline focused (50/50)</span>
+              <span>Balanced (70/30)</span>
+              <span>Brand builder (95/5)</span>
+            </div>
+            <div className="mt-3 p-3 bg-bg rounded-xl text-xs text-muted leading-relaxed">
+              {contentMix >= 90
+                ? '✦ Almost all posts will be pure thought leadership — your product is barely mentioned. Great for building credibility first.'
+                : contentMix >= 75
+                ? '✦ Mostly thought leadership with occasional natural product references. Recommended for most sales professionals.'
+                : contentMix >= 60
+                ? '✦ Balanced mix — Cadence will weave your product into roughly 1 in 3 posts. Good for active pipeline generation.'
+                : '✦ Product-forward — most posts will connect back to what you sell. Best for founders and high-intent outreach.'}
+            </div>
           </div>
         </SettingsCard>
 

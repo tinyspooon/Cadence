@@ -17,16 +17,16 @@ interface TeamMember {
 }
 
 const TEAM: TeamMember[] = [
-  { id: '1', name: 'Kirk Horton',        role: 'SDR',         avatar: 'K', color: '#FF5C35', postsThisMonth: 14, streak: 9,  consistency: 94, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
-  { id: '2', name: 'Brandon Laughlin',   role: 'SDR',         avatar: 'B', color: '#7C4DFF', postsThisMonth: 11, streak: 6,  consistency: 82, topStyle: 'Insight',     lastPosted: 'Yesterday', status: 'active' },
-  { id: '3', name: 'Oli Elliott',        role: 'Head of SDR', avatar: 'O', color: '#0EA47A', postsThisMonth: 9,  streak: 3,  consistency: 78, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
-  { id: '4', name: 'Davis Payer',        role: 'SDR',         avatar: 'D', color: '#D97706', postsThisMonth: 8,  streak: 4,  consistency: 71, topStyle: 'Observation', lastPosted: '2 days ago',status: 'active' },
-  { id: '5', name: 'Charlotte Mungovan', role: 'SDR',         avatar: 'C', color: '#0A66C2', postsThisMonth: 6,  streak: 2,  consistency: 58, topStyle: 'Insight',     lastPosted: '3 days ago',status: 'at-risk' },
-  { id: '6', name: 'Lucas Heldman',      role: 'SDR',         avatar: 'L', color: '#9333EA', postsThisMonth: 5,  streak: 1,  consistency: 45, topStyle: 'Story',       lastPosted: '4 days ago',status: 'at-risk' },
-  { id: '7', name: 'David Ward',         role: 'SDR',         avatar: 'D', color: '#059669', postsThisMonth: 3,  streak: 0,  consistency: 28, topStyle: '—',           lastPosted: '1 week ago',status: 'inactive' },
-  { id: '8', name: 'Chris Fenimore',     role: 'SDR',         avatar: 'C', color: '#DC2626', postsThisMonth: 2,  streak: 0,  consistency: 19, topStyle: '—',           lastPosted: '1 week ago',status: 'inactive' },
-  { id: '9', name: 'Antonio Lovine',     role: 'SDR',         avatar: 'A', color: '#7C3AED', postsThisMonth: 1,  streak: 0,  consistency: 12, topStyle: '—',           lastPosted: '2 weeks ago',status: 'inactive' },
-  { id: '10',name: 'Brendan Dougherty',  role: 'SDR',         avatar: 'B', color: '#B45309', postsThisMonth: 0,  streak: 0,  consistency: 0,  topStyle: '—',           lastPosted: 'Never',     status: 'inactive' },
+  { id: '1', name: 'Ryan Callahan',        role: 'SDR',         avatar: 'K', color: '#FF5C35', postsThisMonth: 14, streak: 9,  consistency: 94, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
+  { id: '2', name: 'Jamie Torres',   role: 'SDR',         avatar: 'B', color: '#7C4DFF', postsThisMonth: 11, streak: 6,  consistency: 82, topStyle: 'Insight',     lastPosted: 'Yesterday', status: 'active' },
+  { id: '3', name: 'Alex Morgan',        role: 'Head of SDR', avatar: 'O', color: '#0EA47A', postsThisMonth: 9,  streak: 3,  consistency: 78, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
+  { id: '4', name: 'Sam Fletcher',        role: 'SDR',         avatar: 'D', color: '#D97706', postsThisMonth: 8,  streak: 4,  consistency: 71, topStyle: 'Observation', lastPosted: '2 days ago',status: 'active' },
+  { id: '5', name: 'Priya Sharma', role: 'SDR',         avatar: 'C', color: '#0A66C2', postsThisMonth: 6,  streak: 2,  consistency: 58, topStyle: 'Insight',     lastPosted: '3 days ago',status: 'at-risk' },
+  { id: '6', name: 'Ben Wallace',      role: 'SDR',         avatar: 'L', color: '#9333EA', postsThisMonth: 5,  streak: 1,  consistency: 45, topStyle: 'Story',       lastPosted: '4 days ago',status: 'at-risk' },
+  { id: '7', name: 'Mia Chen',         role: 'SDR',         avatar: 'D', color: '#059669', postsThisMonth: 3,  streak: 0,  consistency: 28, topStyle: '—',           lastPosted: '1 week ago',status: 'inactive' },
+  { id: '8', name: 'Tyler Brooks',     role: 'SDR',         avatar: 'C', color: '#DC2626', postsThisMonth: 2,  streak: 0,  consistency: 19, topStyle: '—',           lastPosted: '1 week ago',status: 'inactive' },
+  { id: '9', name: 'Sofia Reyes',     role: 'SDR',         avatar: 'A', color: '#7C3AED', postsThisMonth: 1,  streak: 0,  consistency: 12, topStyle: '—',           lastPosted: '2 weeks ago',status: 'inactive' },
+  { id: '10',name: 'Jake Nolan',  role: 'SDR',         avatar: 'B', color: '#B45309', postsThisMonth: 0,  streak: 0,  consistency: 0,  topStyle: '—',           lastPosted: 'Never',     status: 'inactive' },
 ]
 
 const MEDALS = ['🥇','🥈','🥉']
@@ -178,8 +178,8 @@ export default function TeamPage() {
                     {m.avatar}
                   </div>
                   <div className="min-w-0">
-                    <div className={`text-sm font-semibold truncate ${m.name === 'Oli Elliott' ? 'text-accent' : 'text-text'}`}>
-                      {m.name}{m.name === 'Oli Elliott' ? ' (you)' : ''}
+                    <div className={`text-sm font-semibold truncate ${m.name === 'Alex Morgan' ? 'text-accent' : 'text-text'}`}>
+                      {m.name}{m.name === 'Alex Morgan' ? ' (you)' : ''}
                     </div>
                     <div className="text-xs text-faint">{m.lastPosted}</div>
                   </div>
@@ -258,10 +258,10 @@ export default function TeamPage() {
           <div className="text-xs text-muted mb-4">Achievements unlock automatically based on posting activity</div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { emoji: '🔥', name: 'On Fire', desc: '7-day streak', earner: 'Kirk Horton' },
-              { emoji: '✍️', name: 'Prolific', desc: '10+ posts in a month', earner: 'Kirk Horton' },
-              { emoji: '🎯', name: 'Consistent', desc: '80%+ consistency', earner: 'Brandon Laughlin' },
-              { emoji: '🚀', name: 'First Post', desc: 'Posted for the first time', earner: 'Antonio Lovine' },
+              { emoji: '🔥', name: 'On Fire', desc: '7-day streak', earner: 'Ryan Callahan' },
+              { emoji: '✍️', name: 'Prolific', desc: '10+ posts in a month', earner: 'Ryan Callahan' },
+              { emoji: '🎯', name: 'Consistent', desc: '80%+ consistency', earner: 'Jamie Torres' },
+              { emoji: '🚀', name: 'First Post', desc: 'Posted for the first time', earner: 'Sofia Reyes' },
             ].map((b, i) => (
               <div key={i} className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-3 text-center">
                 <div className="text-2xl mb-1">{b.emoji}</div>
