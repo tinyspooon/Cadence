@@ -79,17 +79,18 @@ export default function TodayPost({ userId }: { userId: string }) {
     } finally { setLoading(false) }
   }
 
-  async function handleApproveAndPost() {
-    navigator.clipboard?.writeText(post)
+  function handleApproveAndPost() {
+    // Must be synchronous to avoid popup blocker — open window immediately on click
+    const linkedInWindow = window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank')
+    // Copy to clipboard
+    navigator.clipboard?.writeText(post).catch(() => {})
     setApproved(true); setCopied(true)
-    try {
-      await fetch('/api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: post, platform: 'linkedin', style: 'Story', status: 'posted' }),
-      })
-    } catch (e) { console.warn('Failed to save post:', e) }
-    window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank')
+    // Save to DB async (non-blocking)
+    fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: post, platform: 'linkedin', style: 'Story', status: 'posted' }),
+    }).catch(e => console.warn('Failed to save post:', e))
   }
 
   if (approved) {

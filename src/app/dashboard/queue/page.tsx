@@ -108,13 +108,14 @@ export default function QueuePage() {
   }
 
   function handleApprovePost(post: Post) {
-    navigator.clipboard?.writeText(post.full)
-    setCopied(post.id)
-    setTimeout(() => setCopied(null), 2000)
+    // Open window synchronously first to avoid popup blocker
     const url = post.platform === 'x'
       ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.full.substring(0, 270))}`
       : 'https://www.linkedin.com/feed/?shareActive=true'
     window.open(url, '_blank')
+    navigator.clipboard?.writeText(post.full).catch(() => {})
+    setCopied(post.id)
+    setTimeout(() => setCopied(null), 2000)
     setPosts(prev => prev.map(p => p.id === post.id ? { ...p, status: 'posted' } : p))
   }
 

@@ -111,7 +111,7 @@ export default function SettingsPage() {
   const [differentiator, setDiff]        = useState('')
   const [contentMix, setContentMix]      = useState(80) // 80 = 80% thought leadership, 20% product
   const [postsPerDay, setPostsPerDay]         = useState(1)
-  const [activeDays, setActiveDays]           = useState<number[]>([1,2,3,4,5]) // Mon-Fri
+  const [activeDays, setActiveDays]           = useState<number[]>([1,2,3,4,5]) // Mon=1, Tue=2... Sun=7
   const [platformAlloc, setPlatformAlloc]     = useState<Record<PlatformKey, number>>({ linkedin: 1, x: 0, instagram: 0, facebook: 0, tiktok: 0 })
   const [enabledPlatforms, setEnabledPlatforms] = useState<Set<PlatformKey>>(new Set<PlatformKey>(['linkedin']))
 
@@ -129,7 +129,8 @@ export default function SettingsPage() {
   const totalAllocated = Object.values(platformAlloc).reduce((a, b) => a + b, 0)
 
   function toggleDay(i: number) {
-    setActiveDays(prev => prev.includes(i) ? prev.filter(d => d !== i) : [...prev, i].sort())
+    const day = i + 1 // 1=Mon, 2=Tue ... 7=Sun
+    setActiveDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort())
   }
 
   function togglePlatform(key: PlatformKey) {
@@ -196,7 +197,7 @@ export default function SettingsPage() {
       if (profile.differentiator) setDiff(profile.differentiator)
       if (profile.content_mix) setContentMix(profile.content_mix)
       if (profile.posts_per_day) setPostsPerDay(profile.posts_per_day)
-      if (profile.active_days) setActiveDays(profile.active_days)
+      if (profile.active_days?.length) setActiveDays(profile.active_days)
       if (profile.enabled_platforms) setEnabledPlatforms(new Set<PlatformKey>(profile.enabled_platforms))
       if (profile.linkedin_url) setLi(profile.linkedin_url)
       if (profile.x_handle) setX(profile.x_handle)
@@ -350,7 +351,7 @@ export default function SettingsPage() {
               {DAYS.map((d, i) => (
                 <button key={d} onClick={() => toggleDay(i)}
                   className={`flex-1 py-2 rounded-xl border text-xs font-bold transition-all ${
-                    activeDays.includes(i)
+                    activeDays.includes(i + 1)
                       ? 'bg-accent-light border-accent text-accent'
                       : 'bg-white border-border2 text-muted hover:border-accent hover:text-accent'
                   }`}>{d}</button>

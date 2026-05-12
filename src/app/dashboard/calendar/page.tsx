@@ -65,13 +65,14 @@ export default function CalendarPage() {
 
   function handleApprovePost() {
     if (!modal || !modalPost) return
-    setApproved(prev => new Set(prev).add(modal))
-    navigator.clipboard?.writeText(modalPost.full)
-    setCopied(true)
+    // Open window synchronously first to avoid popup blocker
     const url = modalPost.platform === 'x'
       ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(modalPost.full.substring(0, 270))}`
       : 'https://www.linkedin.com/feed/?shareActive=true'
     window.open(url, '_blank')
+    setApproved(prev => new Set(prev).add(modal))
+    navigator.clipboard?.writeText(modalPost.full).catch(() => {})
+    setCopied(true)
     showToast(modalPost.platform === 'x' ? '𝕏 Opening X — text pre-filled' : '💼 Opening LinkedIn — paste and click Post')
   }
 
