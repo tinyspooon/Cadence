@@ -75,15 +75,20 @@ export default function MiniCalendar() {
             <div
               key={d}
               onClick={() => router.push('/dashboard/calendar')}
-              className={[
-                'aspect-square flex items-center justify-center rounded text-[11px] font-medium transition-colors cursor-pointer',
-                isToday    ? 'bg-accent text-white font-bold rounded-full' :
-                isApproved ? 'bg-green-100 text-green-700 font-bold hover:bg-green-200' :
-                isSched    ? 'bg-blue-50 text-blue-600 font-bold hover:bg-blue-100' :
-                             'hover:bg-surface',
-              ].join(' ')}
+              className="aspect-square flex flex-col items-center justify-center rounded cursor-pointer transition-colors hover:bg-surface relative"
             >
-              {d}
+              <span className={[
+                'text-[11px] font-medium leading-none',
+                isToday    ? 'w-5 h-5 bg-accent text-white font-bold rounded-full flex items-center justify-center' :
+                isApproved ? 'text-green-600 font-bold' :
+                isSched    ? 'text-text font-semibold' :
+                             'text-muted',
+              ].join(' ')}>
+                {d}
+              </span>
+              {(isSched || isApproved) && (
+                <span className={`w-1 h-1 rounded-full mt-0.5 ${isApproved ? 'bg-green-500' : 'bg-accent'}`} />
+              )}
             </div>
           )
         })}
