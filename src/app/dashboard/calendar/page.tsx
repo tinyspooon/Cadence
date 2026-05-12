@@ -224,6 +224,7 @@ export default function CalendarPage() {
               <><span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />Generating...</>
             ) : '✦ Generate week'}
           </button>
+        </div>
         <div className="flex gap-1.5 flex-wrap">
           {(['all','linkedin','x','approved','overdue'] as Filter[]).map(f => (
             <button key={f} onClick={() => setFilter(f)}
