@@ -74,7 +74,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Profile not found — please complete settings first' }, { status: 400 })
   }
 
-  const activeDays: number[] = profile.active_days ?? [1, 2, 3, 4, 5]
+  const activeDays: number[] = (profile.active_days ?? [1, 2, 3, 4, 5]).map((d: number) => {
+    // Normalise: if any day is 0, the array is 0-indexed (old format) — shift to 1-indexed
+    return d === 0 ? 7 : d // 0 would be invalid, treat as legacy
+  })
+  // If the max value is 4 or less, it's 0-indexed (0=Mon...6=Sun) — shift all up by 1
+  const maxDay = Math.max(...activeDays)
+  const normalisedDays = maxDay <= 6 && activeDays.includes(0) 
+    ? activeDays.map(d => d + 1) 
+    : activeDays
   const postsPerDay: number = profile.posts_per_day ?? 1
   const platforms: string[] = profile.enabled_platforms ?? ['linkedin']
   const voiceData = voice ?? {}
@@ -90,7 +98,7 @@ export async function POST(req: Request) {
     .gte('scheduled_for', today.toISOString().split('T')[0])
 
   // Generate posts for the next 14 days based on active days
-  const scheduledDates = getScheduledDates(activeDays, 14)
+  const scheduledDates = getScheduledDates(normalisedDays, 14)
   const postsToCreate: Record<string, unknown>[] = []
   let topicIndex = 0
 
