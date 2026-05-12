@@ -121,7 +121,8 @@ export default function TodayPost({ userId }: { userId: string }) {
   async function generatePost(p: Profile, v: VoiceSettings) {
     setLoading(true)
     try {
-      const raw = await generate(buildPrompt(p, v), { maxTokens: 500 })
+      const maxTok = v.post_length === 'short' ? 150 : v.post_length === 'long' ? 450 : 250
+      const raw = await generate(buildPrompt(p, v), { maxTokens: maxTok })
       let text = raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').replace(/#{1,6}\s/g, '').trim()
       
       // If short paragraphs is on, force each sentence onto its own line
