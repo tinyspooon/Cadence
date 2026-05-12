@@ -39,10 +39,25 @@ function buildPrompt(p: Profile, v: VoiceSettings): string {
     companyNote = `\n${freq} ${p.company} (${p.company_one_liner}) if it genuinely strengthens the post. Don't force it.`
   }
 
+  const openings = [
+    'Start with a specific number or stat from your experience',
+    'Start with a short statement that challenges conventional wisdom',
+    'Start with a specific moment: set the scene in one sentence',
+    'Start with a direct counter-intuitive claim',
+    'Start with something you got wrong early in your career',
+    'Start with a pattern you keep seeing that others miss',
+    'Start with a specific result, then explain how you got there',
+    'Start with the uncomfortable truth nobody in sales says out loud',
+  ]
+  const opening = openings[Math.floor(Math.random() * openings.length)]
+
   return `You are ghostwriting a LinkedIn post for ${p.name || 'a sales professional'}, ${p.role} at ${p.company}.
-Voice: ${p.tone || 'Bold & direct'}. Write in first person. Be specific — real situations, real observations. Never give generic advice.
+Voice: ${p.tone || 'Bold & direct'}. Write in first person. Be specific — real situations, real numbers. Never give generic advice.
 Topic: ${topic}
-Format: ${words} words. ${rules}. Return ONLY the post text.${companyNote}`
+Opening: ${opening}
+Format: ${words} words. ${rules}.
+Never start with "I've seen" or "I've noticed" — be more direct and specific.
+Return ONLY the post text.${companyNote}`
 }
 
 export default function TodayPost({ userId }: { userId: string }) {

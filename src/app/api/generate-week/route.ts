@@ -48,10 +48,28 @@ function buildPostPrompt(profile: Record<string, unknown>, voice: Record<string,
     companyNote = `\n${freq} ${company} (${profile.company_one_liner}) if it genuinely fits. Don't force it.`
   }
 
+  // Rotate opening styles to avoid repetition
+  const openingStyles = [
+    'Start with a specific number or stat from your experience',
+    'Start with a short provocative statement that challenges conventional wisdom',
+    'Start with "The best [rep/manager/team] I ever worked with..."',
+    'Start with a specific moment or situation: set the scene in one sentence',
+    'Start with a direct counter-intuitive claim',
+    'Start with a question that makes the reader uncomfortable',
+    'Start with something you got wrong early in your career',
+    'Start with a pattern you keep seeing',
+    'Start with a specific result or outcome, then explain how',
+    'Start with the thing nobody in sales wants to admit',
+  ]
+  const openingStyle = openingStyles[topicIndex % openingStyles.length]
+
   return `You are ghostwriting a LinkedIn post for ${name}, ${role} at ${company}.
-Voice: ${tone}. Write in first person. Be specific — real situations, real observations. Never give generic advice.
+Voice: ${tone}. Write in first person. Be specific — real situations, real numbers, real observations. Never give generic advice.
 Topic: ${topic}
-Format: ${words} words. ${rules}. Return ONLY the post text.${companyNote}`
+Opening style: ${openingStyle}
+Format: ${words} words. ${rules}.
+IMPORTANT: Never start with "I've seen" or "I've noticed" — those are overused. Be more specific and direct.
+Return ONLY the post text with no preamble.${companyNote}`
 }
 
 export async function POST(req: Request) {
@@ -88,7 +106,7 @@ export async function POST(req: Request) {
     .eq('status', 'scheduled')
     .gte('scheduled_for', today.toISOString().split('T')[0])
 
-  const scheduledDates = getScheduledDates(activeDays, 14)
+  const scheduledDates = getScheduledDates(activeDays, 21)
   const postsToCreate: Record<string, unknown>[] = []
   let topicIndex = 0
 
