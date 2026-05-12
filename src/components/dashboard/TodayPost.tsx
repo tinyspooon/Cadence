@@ -8,10 +8,14 @@ interface Profile {
   tone?: string; company_one_liner?: string; content_mix?: number
 }
 interface VoiceSettings {
-  tone_slider?: number; length_slider?: number; bold_hook?: boolean
-  short_paragraphs?: boolean; end_with_cta?: boolean
+  tone_slider?: number; length_slider?: number
+  story_slider?: number; provocative_slider?: number
+  bold_hook?: boolean; short_paragraphs?: boolean
+  end_with_cta?: boolean; personal_stories?: boolean
+  rhetorical_questions?: boolean
   use_hashtags?: boolean; max_hashtags?: number
   use_emojis?: boolean; post_length?: string
+  voice_samples?: string[]
 }
 
 const FALLBACK: Profile = {
@@ -39,6 +43,24 @@ function buildPrompt(p: Profile, v: VoiceSettings): string {
     companyNote = `\n${freq} ${p.company} (${p.company_one_liner}) if it genuinely strengthens the post. Don't force it.`
   }
 
+  // Translate DNA sliders to voice instructions
+  const toneVal = v.tone_slider ?? 25
+  const lengthVal = v.length_slider ?? 60
+  const storyVal = v.story_slider ?? 40
+  const provVal = v.provocative_slider ?? 65
+
+  const toneDesc = toneVal > 70 ? 'conversational and direct, like talking to a colleague' :
+                   toneVal > 40 ? 'balanced — professional but approachable' :
+                                  'formal and authoritative'
+
+  const styleDesc = storyVal > 70 ? 'story-driven — anchor every point in a real experience' :
+                    storyVal > 40 ? 'blend of insight and story' :
+                                    'insight and data-driven — back claims with evidence'
+
+  const edgeDesc = provVal > 70 ? 'take a bold, slightly provocative stance — challenge the conventional wisdom' :
+                   provVal > 40 ? 'have a clear point of view, dont sit on the fence' :
+                                  'be measured and evidence-based'
+
   const openings = [
     'Start with a specific number or stat from your experience',
     'Start with a short statement that challenges conventional wisdom',
@@ -51,13 +73,28 @@ function buildPrompt(p: Profile, v: VoiceSettings): string {
   ]
   const opening = openings[Math.floor(Math.random() * openings.length)]
 
+  // Voice samples context
+  const sampleContext = v.voice_samples?.filter((s: string) => s?.trim().length > 30).slice(0, 2)
+    .map((s: string) => s.trim().substring(0, 200))
+    .join('
+---
+')
+
   return `You are ghostwriting a LinkedIn post for ${p.name || 'a sales professional'}, ${p.role} at ${p.company}.
-Voice: ${p.tone || 'Bold & direct'}. Write in first person. Be specific — real situations, real numbers. Never give generic advice.
-Topic: ${topic}
-Opening: ${opening}
-Format: ${words} words. ${rules}.
-Never start with "I've seen" or "I've noticed" — be more direct and specific.
-Return ONLY the post text.${companyNote}`
+
+VOICE PROFILE:
+- Tone: ${toneDesc}
+- Style: ${styleDesc}  
+- Edge: ${edgeDesc}
+${sampleContext ? `- Writing samples (match this voice):
+${sampleContext}` : ''}
+
+TOPIC: ${topic}
+OPENING STYLE: ${opening}
+
+FORMAT: ${words} words. ${rules}.
+Never start with "I've seen" or "I've noticed". Be specific — real situations, real numbers.
+Return ONLY the post text with no preamble.${companyNote}`
 }
 
 export default function TodayPost({ userId }: { userId: string }) {

@@ -31,10 +31,26 @@ function buildPostPrompt(profile: Record<string, unknown>, voice: Record<string,
   const name = profile.name || 'a sales professional'
   const role = profile.role || 'Sales leader'
   const company = profile.company || 'a B2B company'
-  const tone = profile.tone || 'Bold & direct'
   const mix = (profile.content_mix as number) ?? 80
   const postLength = (voice.post_length as string) ?? 'medium'
   const words = postLength === 'short' ? '60-90' : postLength === 'long' ? '200-280' : '100-140'
+
+  // DNA sliders → voice instructions
+  const toneVal = (voice.tone_slider as number) ?? 25
+  const storyVal = (voice.story_slider as number) ?? 40
+  const provVal = (voice.provocative_slider as number) ?? 65
+
+  const toneDesc = toneVal > 70 ? 'conversational and direct, like talking to a colleague' :
+                   toneVal > 40 ? 'balanced — professional but approachable' :
+                                  'formal and authoritative'
+
+  const styleDesc = storyVal > 70 ? 'story-driven — anchor every point in a real experience' :
+                    storyVal > 40 ? 'blend of insight and story' :
+                                    'insight and data-driven — back claims with evidence'
+
+  const edgeDesc = provVal > 70 ? 'take a bold, slightly provocative stance — challenge conventional wisdom' :
+                   provVal > 40 ? 'have a clear point of view, dont sit on the fence' :
+                                  'be measured and evidence-based'
 
   const rules = [
     voice.bold_hook !== false && 'Start with a bold single-line hook',
@@ -50,28 +66,38 @@ function buildPostPrompt(profile: Record<string, unknown>, voice: Record<string,
     companyNote = `\n${freq} ${company} (${profile.company_one_liner}) if it genuinely fits. Don't force it.`
   }
 
-  // Rotate opening styles to avoid repetition
   const openingStyles = [
     'Start with a specific number or stat from your experience',
     'Start with a short provocative statement that challenges conventional wisdom',
-    'Start with "The best [rep/manager/team] I ever worked with..."',
-    'Start with a specific moment or situation: set the scene in one sentence',
+    'Start with a specific moment: set the scene in one sentence',
     'Start with a direct counter-intuitive claim',
     'Start with a question that makes the reader uncomfortable',
     'Start with something you got wrong early in your career',
-    'Start with a pattern you keep seeing',
-    'Start with a specific result or outcome, then explain how',
-    'Start with the thing nobody in sales wants to admit',
+    'Start with a pattern you keep seeing that others miss',
+    'Start with a specific result, then explain how you got there',
+    'Start with the uncomfortable truth nobody in sales wants to admit',
+    'Start with a short story about a rep or manager you worked with',
   ]
   const openingStyle = openingStyles[topicIndex % openingStyles.length]
 
+  // Voice samples
+  const samples = (voice.voice_samples as string[])?.filter(s => s?.trim().length > 30).slice(0, 2)
+    .map(s => s.trim().substring(0, 200)).join('\n---\n')
+
   return `You are ghostwriting a LinkedIn post for ${name}, ${role} at ${company}.
-Voice: ${tone}. Write in first person. Be specific — real situations, real numbers, real observations. Never give generic advice.
-Topic: ${topic}
-Opening style: ${openingStyle}
-Format: ${words} words. ${rules}.
-IMPORTANT: Never start with "I've seen" or "I've noticed" — those are overused. Be more specific and direct.
-Return ONLY the post text with no preamble.${companyNote}`
+
+VOICE PROFILE:
+- Tone: ${toneDesc}
+- Style: ${styleDesc}
+- Edge: ${edgeDesc}
+${samples ? `- Writing samples to match:
+${samples}` : ''}
+
+TOPIC: ${topic}
+OPENING: ${openingStyle}
+FORMAT: ${words} words. ${rules}.
+Never start with "I've seen" or "I've noticed". Be specific — real situations, real numbers.
+Return ONLY the post text.${companyNote}`
 }
 
 export async function POST(req: Request) {
