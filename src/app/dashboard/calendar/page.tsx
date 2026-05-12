@@ -154,11 +154,11 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar */}
-      <div className="p-4">
+      <div className="p-4 bg-[#FAF8F6] min-h-full">
         {/* DOW row */}
         <div className="grid grid-cols-7 gap-1 mb-1">
           {DOWS.map((d, i) => (
-            <div key={d} className={`text-center text-xs font-bold uppercase tracking-wide py-2 ${i >= 5 ? 'text-faint' : 'text-muted'}`}>{d}</div>
+            <div key={d} className={`text-center text-xs font-semibold uppercase tracking-wider py-2 ${i >= 5 ? 'text-[#C4BDB6]' : 'text-[#9B9590]'}`}>{d}</div>
           ))}
         </div>
 
@@ -189,24 +189,22 @@ export default function CalendarPage() {
                 onClick={() => { if (data || over) openModal(d) }}
                 className={[
                   'min-h-[90px] rounded-xl border p-2 flex flex-col transition-all duration-150 select-none relative overflow-hidden',
-                  isTarget   ? 'border-accent border-2 bg-accent-light shadow-md' :
-                  isToday    ? 'border-accent border-2 bg-orange-50 shadow-sm' :
-                  over       ? 'bg-red-50 border-red-200 cursor-pointer' :
-                  data && isAp ? 'bg-green-50 border-green-200 cursor-pointer hover:border-green-400 hover:shadow-md' :
-                  data && data.platform === 'x' ? 'bg-zinc-900 border-zinc-700 cursor-pointer hover:border-zinc-500 hover:shadow-md' :
-                  data       ? 'bg-blue-50 border-blue-200 cursor-pointer hover:border-blue-400 hover:shadow-md' :
-                  isWeekend  ? 'bg-[#FAFAF8] border-[#EDEBE7]' :
-                               'bg-white border-border',
+                  isTarget   ? 'border-accent border-2 bg-[#FFF8F6] shadow-md' :
+                  isToday    ? 'border-[#FF6B3D] border-2 bg-white shadow-sm' :
+                  over       ? 'bg-[#FFF5F5] border-red-200 cursor-pointer' :
+                  data       ? 'bg-white border-[#ECE7E2] cursor-pointer hover:shadow-md hover:border-[#D0C8C0] hover:translate-y-[-1px]' :
+                  isWeekend  ? 'bg-[#FAF8F6] border-[#ECE7E2]' :
+                               'bg-white border-[#ECE7E2]',
                   dragging   ? 'opacity-25 scale-95 cursor-grabbing' : '',
                   filt       ? 'opacity-10 pointer-events-none' : '',
                 ].filter(Boolean).join(' ')}
               >
                 {/* Day number */}
                 <div className={`text-xs font-bold mb-1 flex items-center justify-between ${
-                  isToday ? 'text-accent' : (data?.platform === 'x' && !isAp && !over) ? 'text-zinc-400' : isWeekend ? 'text-faint' : 'text-muted'
+                  isToday ? 'text-[#FF6B3D]' : isWeekend ? 'text-[#C4BDB6]' : 'text-[#6B6560]'
                 }`}>
                   <span>{d}</span>
-                  {isToday && <span className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0" />}
+                  {isToday && <span className="w-1.5 h-1.5 bg-[#FF6B3D] rounded-full flex-shrink-0" />}
                 </div>
 
                 {/* Post chip */}
