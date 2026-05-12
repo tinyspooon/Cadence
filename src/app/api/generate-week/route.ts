@@ -5,26 +5,30 @@ import { createUserClient } from '@/lib/supabase/server'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
-// Day index to name
-const DAY_NAMES = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
-// Get all dates in the next N days that match active days
 function getScheduledDates(activeDays: number[], daysAhead: number = 14): Date[] {
   const dates: Date[] = []
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-
   for (let i = 0; i <= daysAhead; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
-    const jsDow = date.getDay()
-    // Convert JS day (0=Sun) to our format (1=Mon...7=Sun)
-    const ourDow = jsDow === 0 ? 7 : jsDow
+    const jsDow = date.getDay() // 0=Sun, 1=Mon...6=Sat
+    const ourDow = jsDow === 0 ? 7 : jsDow // convert to 1=Mon...7=Sun
     if (activeDays.includes(ourDow)) {
       dates.push(new Date(date))
     }
   }
   return dates
+}
+
+function normaliseDays(raw: (number | string)[]): number[] {
+  const parsed = raw.map(d => parseInt(String(d), 10)).filter(d => !isNaN(d))
+  if (parsed.length === 0) return [1, 2, 3, 4, 5]
+  // If any value is 0 it's 0-indexed (0=Mon...6=Sun) — shift to 1=Mon...7=Sun
+  if (parsed.includes(0)) {
+    return parsed.map(d => d + 1).filter(d => d >= 1 && d <= 7)
+  }
+  return parsed.filter(d => d >= 1 && d <= 7)
 }
 
 function buildPostPrompt(profile: Record<string, unknown>, voice: Record<string, unknown>, topicIndex: number): string {
@@ -64,7 +68,6 @@ export async function POST(req: Request) {
 
   const supabase = await createUserClient(userId)
 
-  // Load profile and voice settings
   const [{ data: profile }, { data: voice }] = await Promise.all([
     supabase.from('profiles').select('*').eq('clerk_user_id', userId).single(),
     supabase.from('voice_settings').select('*').eq('clerk_user_id', userId).single(),
@@ -74,23 +77,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Profile not found — please complete settings first' }, { status: 400 })
   }
 
-  const activeDays: number[] = (profile.active_days ?? [1, 2, 3, 4, 5]).map((d: number) => {
-    // Normalise active_days — DB may have strings, 0-indexed, or 1-indexed values
-  // We need JS-compatible: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=7
-  const rawDays: (number | string)[] = profile.active_days ?? [1, 2, 3, 4, 5]
-  const parsedDays = rawDays.map(d => parseInt(String(d), 10)).filter(d => !isNaN(d))
-  
-  // Detect if 0-indexed (contains 0 or max is <= 6 with no 7)
-  const isZeroIndexed = parsedDays.includes(0) || (Math.max(...parsedDays) <= 6 && !parsedDays.includes(7))
-  // Convert to 1-indexed (1=Mon...7=Sun) to match JS getDay() conversion
-  const normalisedDays = isZeroIndexed 
-    ? parsedDays.map(d => d + 1).filter(d => d >= 1 && d <= 7)
-    : parsedDays.filter(d => d >= 1 && d <= 7)
+  const activeDays = normaliseDays(profile.active_days ?? [1, 2, 3, 4, 5])
   const postsPerDay: number = profile.posts_per_day ?? 1
   const platforms: string[] = profile.enabled_platforms ?? ['linkedin']
   const voiceData = voice ?? {}
 
-  // Delete existing future scheduled posts for this user (regenerating the week)
+  // Delete existing future scheduled posts
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   await supabase
@@ -100,58 +92,58 @@ export async function POST(req: Request) {
     .eq('status', 'scheduled')
     .gte('scheduled_for', today.toISOString().split('T')[0])
 
-  // Generate posts for the next 14 days based on active days
-  const scheduledDates = getScheduledDates(normalisedDays, 14)
+  const scheduledDates = getScheduledDates(activeDays, 14)
   const postsToCreate: Record<string, unknown>[] = []
   let topicIndex = 0
 
   for (const date of scheduledDates) {
     for (let p = 0; p < postsPerDay; p++) {
-        const platform = platforms[p % platforms.length] ?? 'linkedin'
-        const prompt = buildPostPrompt(profile, voiceData, topicIndex)
-        topicIndex++
+      const platform = platforms[p % platforms.length] ?? 'linkedin'
+      const prompt = buildPostPrompt(profile, voiceData, topicIndex)
+      topicIndex++
 
-        try {
-          const completion = await groq.chat.completions.create({
-            model: 'llama-3.3-70b-versatile',
-            messages: [{ role: 'user', content: prompt }],
-            max_tokens: 400,
-            temperature: 0.85,
-          })
+      try {
+        const completion = await groq.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 400,
+          temperature: 0.85,
+        })
 
-          const raw = completion.choices[0]?.message?.content?.trim() ?? ''
-          const text = raw
-            .replace(/\*\*(.*?)\*\*/g, '$1')
-            .replace(/\*(.*?)\*/g, '$1')
-            .replace(/#{1,6}\s/g, '')
-            .trim()
+        const raw = completion.choices[0]?.message?.content?.trim() ?? ''
+        const text = raw
+          .replace(/\*\*(.*?)\*\*/g, '$1')
+          .replace(/\*(.*?)\*/g, '$1')
+          .replace(/#{1,6}\s/g, '')
+          .trim()
 
-          const topics = (profile.topics as string[]) ?? []
-          postsToCreate.push({
-            clerk_user_id: userId,
-            content: text,
-            platform: platform,
-            style: 'Story',
-            topic: topics[topicIndex % Math.max(topics.length, 1)] ?? 'Sales leadership',
-            status: 'scheduled',
-            scheduled_for: date.toISOString().split('T')[0],
-            model_used: 'llama-3.3-70b-versatile',
-          })
-        } catch (e) {
-          console.error('Groq generation failed for', date, e)
-        }
+        const topics = (profile.topics as string[]) ?? []
+        postsToCreate.push({
+          clerk_user_id: userId,
+          content: text,
+          platform: platform,
+          style: 'Story',
+          topic: topics[topicIndex % Math.max(topics.length, 1)] ?? 'Sales leadership',
+          status: 'scheduled',
+          scheduled_for: date.toISOString().split('T')[0],
+          model_used: 'llama-3.3-70b-versatile',
+        })
+      } catch (e) {
+        console.error('Groq generation failed for', date, e)
+      }
     }
   }
 
-  // Save all generated posts
+  if (postsToCreate.length === 0) {
+    return NextResponse.json({ error: 'No posts generated — check your active days in Settings' }, { status: 400 })
+  }
+
   const { data: savedPosts, error } = await supabase
     .from('posts')
     .insert(postsToCreate)
     .select()
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({
     generated: savedPosts?.length ?? 0,
