@@ -1,30 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-const SCHEDULED = [2, 5, 8, 9, 12, 15, 16, 19, 22, 26]
-const OVERDUE = [1, 3]
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
+const DOWS = ['M','T','W','T','F','S','S']
 
 export default function MiniCalendar() {
   const [offset, setOffset] = useState(0)
+  const [scheduledDays, setScheduledDays] = useState<Set<number>>(new Set())
+  const [approvedDays, setApprovedDays] = useState<Set<number>>(new Set())
   const router = useRouter()
   const today = new Date()
 
   const base = new Date(today.getFullYear(), today.getMonth() + offset, 1)
   const year = base.getFullYear()
   const month = base.getMonth()
-  const isNow = today.getFullYear() === year && today.getMonth() === month
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstDay = new Date(year, month, 1).getDay()
   const startOffset = (firstDay + 6) % 7
 
-  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
-  const DOWS = ['M','T','W','T','F','S','S']
+  useEffect(() => {
+    loadPosts()
+  }, [offset])
 
-  function handleDayClick(d: number) {
-    // Navigate to full calendar page
-    router.push('/dashboard/calendar')
+  async function loadPosts() {
+    try {
+      const res = await fetch('/api/posts')
+      const { posts } = await res.json()
+      if (!posts?.length) return
+
+      const scheduled = new Set<number>()
+      const approved = new Set<number>()
+
+      posts.forEach((post: Record<string, unknown>) => {
+        const dateStr = (post.scheduled_for || post.posted_at) as string
+        if (!dateStr) return
+        const datePart = String(dateStr).split('T')[0]
+        const [y, m, d] = datePart.split('-').map(Number)
+        if (y !== year || m !== month + 1) return
+        scheduled.add(d)
+        if (post.status === 'approved' || post.status === 'posted') {
+          approved.add(d)
+        }
+      })
+
+      setScheduledDays(scheduled)
+      setApprovedDays(approved)
+    } catch (e) {
+      console.warn('Failed to load posts for mini calendar:', e)
+    }
   }
 
   return (
@@ -42,22 +67,20 @@ export default function MiniCalendar() {
         ))}
         {Array(startOffset).fill(null).map((_, i) => <div key={`e${i}`} />)}
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(d => {
-          const isToday = isNow && d === today.getDate()
-          const isSched = isNow && SCHEDULED.includes(d) && !isToday
-          const isOver  = isNow && OVERDUE.includes(d) && !isToday
-          const hasContent = isSched || isOver || isToday
+          const isToday   = today.getFullYear() === year && today.getMonth() === month && d === today.getDate()
+          const isSched   = scheduledDays.has(d) && !isToday
+          const isApproved = approvedDays.has(d) && !isToday
 
           return (
             <div
               key={d}
-              onClick={() => handleDayClick(d)}
+              onClick={() => router.push('/dashboard/calendar')}
               className={[
-                'aspect-square flex items-center justify-center rounded text-[11px] font-medium transition-colors',
-                hasContent ? 'cursor-pointer' : 'cursor-pointer hover:bg-surface',
-                isToday ? 'bg-accent text-white font-bold rounded-full' :
-                isSched ? 'bg-teal-light text-teal font-bold hover:bg-teal/20' :
-                isOver  ? 'bg-red-100 text-red-600 font-bold hover:bg-red-200' :
-                          'hover:bg-surface',
+                'aspect-square flex items-center justify-center rounded text-[11px] font-medium transition-colors cursor-pointer',
+                isToday    ? 'bg-accent text-white font-bold rounded-full' :
+                isApproved ? 'bg-green-100 text-green-700 font-bold hover:bg-green-200' :
+                isSched    ? 'bg-blue-50 text-blue-600 font-bold hover:bg-blue-100' :
+                             'hover:bg-surface',
               ].join(' ')}
             >
               {d}
@@ -72,4 +95,3 @@ export default function MiniCalendar() {
     </div>
   )
 }
-
