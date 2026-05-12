@@ -86,7 +86,7 @@ export default function CalendarPage() {
           preview: ((post.content as string) || '').split('\n')[0].substring(0, 80),
           full: (post.content as string) || '',
         }
-        if (post.status === 'approved' || post.status === 'posted') {
+        if (post.status === 'approved') {
           newApproved.add(day)
         }
       })

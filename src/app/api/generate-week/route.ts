@@ -8,21 +8,20 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 // Day index to name
 const DAY_NAMES = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-// Get the next N dates for a given day-of-week (1=Mon...7=Sun)
-function getNextDatesForDay(dayOfWeek: number, count: number = 4): Date[] {
+// Get all dates in the next N days that match active days
+function getScheduledDates(activeDays: number[], daysAhead: number = 14): Date[] {
   const dates: Date[] = []
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  for (let i = 0; dates.length < count; i++) {
+  for (let i = 0; i <= daysAhead; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
-    // JS getDay(): 0=Sun, 1=Mon...6=Sat
-    // Our dayOfWeek: 1=Mon...7=Sun
     const jsDow = date.getDay()
+    // Convert JS day (0=Sun) to our format (1=Mon...7=Sun)
     const ourDow = jsDow === 0 ? 7 : jsDow
-    if (ourDow === dayOfWeek) {
-      dates.push(date)
+    if (activeDays.includes(ourDow)) {
+      dates.push(new Date(date))
     }
   }
   return dates
@@ -90,15 +89,13 @@ export async function POST(req: Request) {
     .eq('status', 'scheduled')
     .gte('scheduled_for', today.toISOString().split('T')[0])
 
-  // Generate posts for the next 2 weeks
+  // Generate posts for the next 14 days based on active days
+  const scheduledDates = getScheduledDates(activeDays, 14)
   const postsToCreate: Record<string, unknown>[] = []
   let topicIndex = 0
 
-  for (const dayOfWeek of activeDays) {
-    const dates = getNextDatesForDay(dayOfWeek, 2) // next 2 occurrences of each day
-
-    for (const date of dates) {
-      for (let p = 0; p < postsPerDay; p++) {
+  for (const date of scheduledDates) {
+    for (let p = 0; p < postsPerDay; p++) {
         const platform = platforms[p % platforms.length] ?? 'linkedin'
         const prompt = buildPostPrompt(profile, voiceData, topicIndex)
         topicIndex++
@@ -132,7 +129,6 @@ export async function POST(req: Request) {
         } catch (e) {
           console.error('Groq generation failed for', date, e)
         }
-      }
     }
   }
 
