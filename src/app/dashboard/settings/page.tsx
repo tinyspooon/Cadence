@@ -129,8 +129,13 @@ export default function SettingsPage() {
   const totalAllocated = Object.values(platformAlloc).reduce((a, b) => a + b, 0)
 
   function toggleDay(i: number) {
-    const day = i + 1 // 1=Mon, 2=Tue ... 7=Sun
-    setActiveDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort())
+    // i is 0-based index, but we want days 1-7 where Sun=7
+    // DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] so i+1 gives 1=Mon...7=Sun
+    const day = i + 1
+    setActiveDays(prev => {
+      const nums = prev.map(d => typeof d === 'string' ? parseInt(d, 10) : d)
+      return nums.includes(day) ? nums.filter(d => d !== day) : [...nums, day].sort()
+    })
   }
 
   function togglePlatform(key: PlatformKey) {
@@ -197,7 +202,7 @@ export default function SettingsPage() {
       if (profile.differentiator) setDiff(profile.differentiator)
       if (profile.content_mix) setContentMix(profile.content_mix)
       if (profile.posts_per_day) setPostsPerDay(profile.posts_per_day)
-      if (profile.active_days?.length) setActiveDays(profile.active_days)
+      if (profile.active_days?.length) setActiveDays(profile.active_days.map((d: number | string) => typeof d === 'string' ? parseInt(d, 10) : d).filter((d: number) => d >= 1 && d <= 7))
       if (profile.enabled_platforms) setEnabledPlatforms(new Set<PlatformKey>(profile.enabled_platforms))
       if (profile.linkedin_url) setLi(profile.linkedin_url)
       if (profile.x_handle) setX(profile.x_handle)
@@ -351,7 +356,7 @@ export default function SettingsPage() {
               {DAYS.map((d, i) => (
                 <button key={d} onClick={() => toggleDay(i)}
                   className={`flex-1 py-2 rounded-xl border text-xs font-bold transition-all ${
-                    activeDays.includes(i + 1)
+                    activeDays.map(d => typeof d === 'string' ? parseInt(d, 10) : d).includes(i + 1)
                       ? 'bg-accent-light border-accent text-accent'
                       : 'bg-white border-border2 text-muted hover:border-accent hover:text-accent'
                   }`}>{d}</button>

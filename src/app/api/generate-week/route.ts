@@ -75,14 +75,17 @@ export async function POST(req: Request) {
   }
 
   const activeDays: number[] = (profile.active_days ?? [1, 2, 3, 4, 5]).map((d: number) => {
-    // Normalise: if any day is 0, the array is 0-indexed (old format) — shift to 1-indexed
-    return d === 0 ? 7 : d // 0 would be invalid, treat as legacy
-  })
-  // If the max value is 4 or less, it's 0-indexed (0=Mon...6=Sun) — shift all up by 1
-  const maxDay = Math.max(...activeDays)
-  const normalisedDays = maxDay <= 6 && activeDays.includes(0) 
-    ? activeDays.map(d => d + 1) 
-    : activeDays
+    // Normalise active_days — DB may have strings, 0-indexed, or 1-indexed values
+  // We need JS-compatible: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=7
+  const rawDays: (number | string)[] = profile.active_days ?? [1, 2, 3, 4, 5]
+  const parsedDays = rawDays.map(d => parseInt(String(d), 10)).filter(d => !isNaN(d))
+  
+  // Detect if 0-indexed (contains 0 or max is <= 6 with no 7)
+  const isZeroIndexed = parsedDays.includes(0) || (Math.max(...parsedDays) <= 6 && !parsedDays.includes(7))
+  // Convert to 1-indexed (1=Mon...7=Sun) to match JS getDay() conversion
+  const normalisedDays = isZeroIndexed 
+    ? parsedDays.map(d => d + 1).filter(d => d >= 1 && d <= 7)
+    : parsedDays.filter(d => d >= 1 && d <= 7)
   const postsPerDay: number = profile.posts_per_day ?? 1
   const platforms: string[] = profile.enabled_platforms ?? ['linkedin']
   const voiceData = voice ?? {}
