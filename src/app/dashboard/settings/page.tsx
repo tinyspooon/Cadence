@@ -190,20 +190,20 @@ export default function SettingsPage() {
         >
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Full name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Oli Elliott"
-                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+              <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">Full name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Your name"
+                className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Role / Title</label>
-              <input type="text" value={role} onChange={e => setRole(e.target.value)} placeholder="Head of SDR"
-                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+              <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">Role / Title</label>
+              <input type="text" value={role} onChange={e => setRole(e.target.value)} placeholder="Your role"
+                className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Company</label>
-            <input type="text" value={company} onChange={e => setCompany(e.target.value)} placeholder="Pepper"
-              className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+            <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">Company</label>
+            <input type="text" value={company} onChange={e => setCompany(e.target.value)} placeholder="Your company"
+              className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
           </div>
         </SettingsCard>
 
@@ -220,28 +220,28 @@ export default function SettingsPage() {
         >
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">One-liner description</label>
+              <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">One-liner description</label>
               <input type="text" value={companyOneLiner} onChange={e => setOneLiner(e.target.value)}
                 placeholder="e.g. Pepper is AI-powered order management for food distributors"
-                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+                className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Problem you solve</label>
+              <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">Problem you solve</label>
               <textarea value={problemSolved} onChange={e => setProblem(e.target.value)} rows={2}
                 placeholder="e.g. Independent food distributors are stuck on phone orders and spreadsheets — losing customers to faster competitors"
-                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all resize-none" />
+                className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all resize-none" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Target customer</label>
+              <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">Target customer</label>
               <input type="text" value={targetCustomer} onChange={e => setTarget(e.target.value)}
                 placeholder="e.g. Independent food & beverage distributors with 10-100 employees"
-                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+                className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-1.5">Key differentiator</label>
+              <label className="block text-xs font-bold text-text uppercase tracking-wide mb-1.5">Key differentiator</label>
               <input type="text" value={differentiator} onChange={e => setDiff(e.target.value)}
                 placeholder="e.g. The only platform built specifically for independent distributors — not adapted from enterprise software"
-                className="w-full px-3 py-2.5 bg-white border border-border2 rounded-xl text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
+                className="w-full px-3 py-2.5 bg-white border-2 border-border2 rounded-xl text-sm text-text placeholder-faint focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all" />
             </div>
           </div>
 

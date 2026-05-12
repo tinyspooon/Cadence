@@ -44,7 +44,14 @@ FORMAT:
 - End with either a specific observation or a short question
 
 Return ONLY the post text. No preamble, no quotes, no "Here's a post:"`
-      const text = await generate(prompt, { maxTokens: 600 })
+      const raw = await generate(prompt, { maxTokens: 600 })
+      // Strip markdown formatting that Groq sometimes adds
+      const text = raw
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/#{1,6}\s/g, '')
+        .replace(/^[-•]\s/gm, '')
+        .trim()
       setPost(text)
     } catch (e) {
       setPost(`I've managed SDR teams long enough to know this:\n\nThe reps who hit quota consistently aren't the ones with the best pitch.\n\nThey're the ones who do the work nobody else wants to do — the research, the follow-up, the patience.\n\nMost people optimise for looking productive. The best reps optimise for being effective.\n\nSame inputs. Completely different outputs.`)

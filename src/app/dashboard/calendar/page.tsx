@@ -190,9 +190,9 @@ export default function CalendarPage() {
                 className={[
                   'min-h-[90px] rounded-xl border p-2 flex flex-col transition-all duration-150 select-none relative overflow-hidden',
                   isTarget   ? 'border-accent border-2 bg-accent-light shadow-md' :
-                  isToday    ? 'border-accent border-2 bg-white shadow-sm' :
+                  isToday    ? 'border-accent border-2 bg-accent-light shadow-md' :
                   over       ? 'bg-red-50 border-red-200 cursor-pointer' :
-                  data       ? 'bg-white border-border cursor-pointer hover:border-accent hover:shadow-sm' :
+                  data       ? 'bg-white border-border cursor-pointer hover:border-accent hover:shadow-md' :
                   isWeekend  ? 'bg-[#FAFAF8] border-[#EDEBE7]' :
                                'bg-white border-border',
                   dragging   ? 'opacity-25 scale-95 cursor-grabbing' : '',
@@ -211,9 +211,9 @@ export default function CalendarPage() {
                 {data ? (
                   <div className="flex flex-col gap-0.5 flex-1 min-h-0">
                     <div className={`text-[10px] font-bold rounded px-1.5 py-0.5 w-fit leading-tight ${
-                      isAp             ? 'bg-green-100 text-green-700' :
-                      data.platform === 'x' ? 'bg-gray-100 text-gray-600' :
-                                          'bg-[#EBF4FF] text-[#0A66C2]'
+                      isAp             ? 'bg-green-600 text-white' :
+                      data.platform === 'x' ? 'bg-gray-800 text-white' :
+                                          'bg-[#0A66C2] text-white'
                     }`}>
                       {data.platform === 'x' ? '𝕏' : 'in'} · {data.style}
                     </div>
