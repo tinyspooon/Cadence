@@ -190,9 +190,11 @@ export default function CalendarPage() {
                 className={[
                   'min-h-[90px] rounded-xl border p-2 flex flex-col transition-all duration-150 select-none relative overflow-hidden',
                   isTarget   ? 'border-accent border-2 bg-accent-light shadow-md' :
-                  isToday    ? 'border-accent border-2 bg-orange-50 shadow-md' :
+                  isToday    ? 'border-accent border-2 bg-orange-50 shadow-sm' :
                   over       ? 'bg-red-50 border-red-200 cursor-pointer' :
-                  data       ? 'bg-white border-border cursor-pointer hover:border-accent hover:shadow-md' :
+                  data && isAp ? 'bg-green-50 border-green-200 cursor-pointer hover:border-green-400 hover:shadow-md' :
+                  data && data.platform === 'x' ? 'bg-slate-50 border-slate-200 cursor-pointer hover:border-slate-400 hover:shadow-md' :
+                  data       ? 'bg-blue-50 border-blue-200 cursor-pointer hover:border-blue-400 hover:shadow-md' :
                   isWeekend  ? 'bg-[#FAFAF8] border-[#EDEBE7]' :
                                'bg-white border-border',
                   dragging   ? 'opacity-25 scale-95 cursor-grabbing' : '',
@@ -209,18 +211,19 @@ export default function CalendarPage() {
 
                 {/* Post chip */}
                 {data ? (
-                  <div className="flex flex-col flex-1 min-h-0 -mx-2 -mb-2 overflow-hidden rounded-b-xl">
-                    {/* Platform header strip */}
-                    <div className={`flex items-center gap-1 px-2 py-1 ${
-                      isAp ? 'bg-green-500' :
-                      data.platform === 'x' ? 'bg-slate-800' : 'bg-[#0A66C2]'
-                    }`}>
-                      <span className="text-[10px] font-bold text-white">
-                        {isAp ? '✓ Approved' : data.platform === 'x' ? '𝕏 X/Twitter' : 'in LinkedIn'}
+                  <div className="flex flex-col flex-1 min-h-0 gap-1">
+                    {/* Platform pill */}
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                        isAp             ? 'bg-green-200 text-green-800' :
+                        data.platform === 'x' ? 'bg-slate-200 text-slate-700' :
+                                              'bg-blue-200 text-blue-800'
+                      }`}>
+                        {isAp ? '✓ Done' : data.platform === 'x' ? '𝕏' : 'in'}
                       </span>
-                      <span className="text-[9px] text-white/70 ml-auto">{data.style}</span>
+                      <span className="text-[9px] font-semibold text-muted">{data.style}</span>
                     </div>
-                    <p className="text-[10px] text-muted leading-snug line-clamp-2 px-2 pt-1.5 pb-1">{data.preview}</p>
+                    <p className="text-[11px] text-text/80 leading-snug line-clamp-3 font-medium">{data.preview}</p>
                   </div>
                 ) : over ? (
                   <div className="text-[10px] font-bold text-red-500 bg-red-100 rounded px-1.5 py-0.5 w-fit">⚠ Missed</div>
