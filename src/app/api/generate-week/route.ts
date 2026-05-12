@@ -5,6 +5,8 @@ import { createUserClient } from '@/lib/supabase/server'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
+// 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun
+// Matches JS: getDay() 0=Sun,1=Mon...6=Sat → ourDow = jsDow===0 ? 7 : jsDow
 function getScheduledDates(activeDays: number[], daysAhead: number = 14): Date[] {
   const dates: Date[] = []
   const today = new Date()
@@ -12,23 +14,13 @@ function getScheduledDates(activeDays: number[], daysAhead: number = 14): Date[]
   for (let i = 0; i <= daysAhead; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
-    const jsDow = date.getDay() // 0=Sun, 1=Mon...6=Sat
-    const ourDow = jsDow === 0 ? 7 : jsDow // convert to 1=Mon...7=Sun
+    const jsDow = date.getDay()
+    const ourDow = jsDow === 0 ? 7 : jsDow
     if (activeDays.includes(ourDow)) {
       dates.push(new Date(date))
     }
   }
   return dates
-}
-
-function normaliseDays(raw: (number | string)[]): number[] {
-  const parsed = raw.map(d => parseInt(String(d), 10)).filter(d => !isNaN(d))
-  if (parsed.length === 0) return [1, 2, 3, 4, 5]
-  // If any value is 0 it's 0-indexed (0=Mon...6=Sun) — shift to 1=Mon...7=Sun
-  if (parsed.includes(0)) {
-    return parsed.map(d => d + 1).filter(d => d >= 1 && d <= 7)
-  }
-  return parsed.filter(d => d >= 1 && d <= 7)
 }
 
 function buildPostPrompt(profile: Record<string, unknown>, voice: Record<string, unknown>, topicIndex: number): string {
@@ -77,7 +69,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Profile not found — please complete settings first' }, { status: 400 })
   }
 
-  const activeDays = normaliseDays(profile.active_days ?? [1, 2, 3, 4, 5])
+  // Parse active_days — always stored as int[] in DB now
+  const activeDays: number[] = (profile.active_days ?? [1,2,3,4,5])
+    .map((d: unknown) => parseInt(String(d), 10))
+    .filter((d: number) => !isNaN(d) && d >= 1 && d <= 7)
+
   const postsPerDay: number = profile.posts_per_day ?? 1
   const platforms: string[] = profile.enabled_platforms ?? ['linkedin']
   const voiceData = voice ?? {}
@@ -135,7 +131,10 @@ export async function POST(req: Request) {
   }
 
   if (postsToCreate.length === 0) {
-    return NextResponse.json({ error: 'No posts generated — check your active days in Settings' }, { status: 400 })
+    return NextResponse.json({ 
+      error: 'No posts generated', 
+      debug: { activeDays, rawDays: profile.active_days }
+    }, { status: 400 })
   }
 
   const { data: savedPosts, error } = await supabase
@@ -145,8 +144,5 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({
-    generated: savedPosts?.length ?? 0,
-    posts: savedPosts,
-  })
+  return NextResponse.json({ generated: savedPosts?.length ?? 0, posts: savedPosts })
 }

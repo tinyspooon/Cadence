@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     content_mix: body.content_mix ?? 80,
     // Schedule
     posts_per_day: body.posts_per_day ?? 1,
-    active_days: body.active_days ?? [1,2,3,4,5],
+    active_days: (body.active_days ?? [1,2,3,4,5]).map((d: unknown) => parseInt(String(d), 10)),
     enabled_platforms: body.enabled_platforms ?? ['linkedin'],
     // Platform handles
     linkedin_url: body.linkedin_url ?? '',
