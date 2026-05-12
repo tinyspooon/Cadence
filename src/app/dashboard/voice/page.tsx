@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ── Types ──────────────────────────────────────────
 interface VoiceSettings {
@@ -67,10 +67,57 @@ export default function VoicePage() {
     setSettings(prev => ({ ...prev, [key]: val }))
   }
 
-  function handleSave() {
+  async function handleSave() {
     setSaved(true)
+    try {
+      await fetch('/api/voice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tone: settings.tone,
+          length: settings.length,
+          story: settings.story,
+          provocative: settings.provocative,
+          boldHook: settings.boldHook,
+          shortParagraphs: settings.shortParagraphs,
+          rhetoricalQuestions: settings.rhetoricalQuestions,
+          endWithCta: settings.endWithCta,
+          personalStories: settings.personalStories,
+          hashtags: settings.hashtags,
+          maxHashtags: settings.maxHashtags,
+          emojis: settings.emojis,
+          postLength: settings.postLength,
+          voiceSamples: samples.filter(s => s.trim().length > 0),
+        }),
+      })
+    } catch (e) {
+      console.warn('Failed to save voice settings:', e)
+    }
     setTimeout(() => setSaved(false), 2000)
   }
+
+  // Load voice settings on mount
+  useEffect(() => {
+    fetch('/api/voice').then(r => r.json()).then(({ voice }) => {
+      if (!voice) return
+      setSettings({
+        tone: voice.tone_slider ?? 25,
+        length: voice.length_slider ?? 60,
+        story: voice.story_slider ?? 40,
+        provocative: voice.provocative_slider ?? 65,
+        boldHook: voice.bold_hook ?? true,
+        shortParagraphs: voice.short_paragraphs ?? true,
+        rhetoricalQuestions: voice.rhetorical_questions ?? false,
+        endWithCta: voice.end_with_cta ?? true,
+        personalStories: voice.personal_stories ?? true,
+        hashtags: voice.use_hashtags ?? false,
+        maxHashtags: voice.max_hashtags ?? 3,
+        emojis: voice.use_emojis ?? false,
+        postLength: voice.post_length ?? 'medium',
+      })
+      if (voice.voice_samples?.length) setSamples([...voice.voice_samples, '', ''].slice(0, 3))
+    }).catch(() => {})
+  }, [])
 
   function analyseSample(i: number, text: string) {
     const newSamples = [...samples]

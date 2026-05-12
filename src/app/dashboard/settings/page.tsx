@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ── Types ──────────────────────────────────────────
 type PlatformKey = 'linkedin' | 'x' | 'instagram' | 'facebook' | 'tiktok'
@@ -156,10 +156,53 @@ export default function SettingsPage() {
     setCustomTopic('')
   }
 
-  function handleSave() {
+  async function handleSave() {
     setSaved(true)
+    try {
+      await fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, role, company,
+          company_one_liner: companyOneLiner,
+          problem_solved: problemSolved,
+          target_customer: targetCustomer,
+          differentiator: differentiator,
+          content_mix: contentMix,
+          posts_per_day: postsPerDay,
+          active_days: activeDays,
+          enabled_platforms: Array.from(enabledPlatforms),
+          linkedin_url: li,
+          x_handle: xHandle,
+          topics: selectedTopics,
+        }),
+      })
+    } catch (e) {
+      console.warn('Failed to save profile:', e)
+    }
     setTimeout(() => setSaved(false), 2000)
   }
+
+  // Load profile on mount
+  useEffect(() => {
+    fetch('/api/profile').then(r => r.json()).then(({ profile }) => {
+      if (!profile) return
+      if (profile.name) setName(profile.name)
+      if (profile.role) setRole(profile.role)
+      if (profile.company) setCompany(profile.company)
+      if (profile.company_one_liner) setOneLiner(profile.company_one_liner)
+      if (profile.problem_solved) setProblem(profile.problem_solved)
+      if (profile.target_customer) setTarget(profile.target_customer)
+      if (profile.differentiator) setDiff(profile.differentiator)
+      if (profile.content_mix) setContentMix(profile.content_mix)
+      if (profile.posts_per_day) setPostsPerDay(profile.posts_per_day)
+      if (profile.active_days) setActiveDays(profile.active_days)
+      if (profile.enabled_platforms) setEnabledPlatforms(new Set<PlatformKey>(profile.enabled_platforms))
+      if (profile.linkedin_url) setLi(profile.linkedin_url)
+      if (profile.x_handle) setX(profile.x_handle)
+      if (profile.topics?.length) setSelectedTopics(profile.topics)
+    }).catch(() => {})
+  }, [])
 
   return (
     <div className="min-h-screen bg-bg">
