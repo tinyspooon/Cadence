@@ -170,6 +170,7 @@ export default function SettingsPage() {
 
   async function handleSave() {
     setSaved(true)
+    console.log('Saving active_days:', activeDays)
     try {
       await fetch('/api/profile', {
         method: 'POST',
