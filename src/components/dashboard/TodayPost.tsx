@@ -76,9 +76,7 @@ function buildPrompt(p: Profile, v: VoiceSettings): string {
   // Voice samples context
   const sampleContext = v.voice_samples?.filter((s: string) => s?.trim().length > 30).slice(0, 2)
     .map((s: string) => s.trim().substring(0, 200))
-    .join('
----
-')
+    .join('\n---\n')
 
   return `You are ghostwriting a LinkedIn post for ${p.name || 'a sales professional'}, ${p.role} at ${p.company}.
 
