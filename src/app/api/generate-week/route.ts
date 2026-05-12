@@ -153,11 +153,19 @@ export async function POST(req: Request) {
         })
 
         const raw = completion.choices[0]?.message?.content?.trim() ?? ''
-        const text = raw
+        let text = raw
           .replace(/\*\*(.*?)\*\*/g, '$1')
           .replace(/\*(.*?)\*/g, '$1')
           .replace(/#{1,6}\s/g, '')
           .trim()
+
+        // Force sentence-per-line if short paragraphs enabled
+        if (voice.short_paragraphs !== false) {
+          text = text
+            .replace(/([.!?])\s+([A-Z])/g, '$1\n$2')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim()
+        }
 
         const topics = (profile.topics as string[]) ?? []
         postsToCreate.push({

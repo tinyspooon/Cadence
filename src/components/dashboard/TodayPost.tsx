@@ -122,7 +122,17 @@ export default function TodayPost({ userId }: { userId: string }) {
     setLoading(true)
     try {
       const raw = await generate(buildPrompt(p, v), { maxTokens: 500 })
-      const text = raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').replace(/#{1,6}\s/g, '').trim()
+      let text = raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').replace(/#{1,6}\s/g, '').trim()
+      
+      // If short paragraphs is on, force each sentence onto its own line
+      if (v.short_paragraphs !== false) {
+        text = text
+          // Split on sentence endings followed by a space and capital letter
+          .replace(/([.!?])\s+([A-Z])/g, '$1\n$2')
+          // Clean up any triple+ newlines
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+      }
       setPost(text)
     } catch {
       setPost("Most sales teams are optimising for the wrong thing.\n\nThey track activity. Dials, emails, tasks logged.\n\nThe teams that consistently hit quota track outcomes. Conversations that moved. Decisions that got made.\n\nSame effort. Completely different results.")
