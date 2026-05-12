@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 type Platform = 'linkedin' | 'x'
 type Filter = 'all' | 'linkedin' | 'x' | 'approved' | 'overdue'
@@ -34,6 +34,9 @@ export default function CalendarPage() {
   const [filter, setFilter]         = useState<Filter>('all')
   const [calData, setCalData]       = useState(INITIAL_CAL_DATA)
   const [approved, setApproved]     = useState<Set<number>>(new Set())
+  const [loading, setLoading]       = useState(true)
+  const [generating, setGenerating] = useState(false)
+  const [genToast, setGenToast]     = useState<string | null>(null)
   const [modal, setModal]           = useState<number | null>(null)
   const [editMode, setEditMode]     = useState(false)
   const [editContent, setEdit]      = useState('')
@@ -49,6 +52,75 @@ export default function CalendarPage() {
   const isNow   = today.getFullYear() === year && today.getMonth() === month
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const startOffset = (new Date(year, month, 1).getDay() + 6) % 7
+
+  // Load posts from DB on mount and when month changes
+  useEffect(() => {
+    loadPostsFromDB()
+  }, [offset])
+
+  async function loadPostsFromDB() {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/posts')
+      const { posts } = await res.json()
+      if (!posts?.length) { setLoading(false); return }
+
+      const today = new Date()
+      const base = new Date(today.getFullYear(), today.getMonth() + offset, 1)
+      const year = base.getFullYear()
+      const month = base.getMonth()
+
+      const newCalData: Record<number, CalPost> = {}
+      const newApproved = new Set<number>()
+
+      posts.forEach((post: Record<string, unknown>) => {
+        if (!post.scheduled_for && post.status !== 'posted') return
+        const dateStr = (post.scheduled_for || post.posted_at) as string
+        if (!dateStr) return
+        const postDate = new Date(dateStr)
+        if (postDate.getFullYear() !== year || postDate.getMonth() !== month) return
+        const day = postDate.getDate()
+        newCalData[day] = {
+          platform: (post.platform as Platform) || 'linkedin',
+          style: (post.style as string) || 'Story',
+          preview: ((post.content as string) || '').split('\n')[0].substring(0, 80),
+          full: (post.content as string) || '',
+        }
+        if (post.status === 'approved' || post.status === 'posted') {
+          newApproved.add(day)
+        }
+      })
+
+      if (Object.keys(newCalData).length > 0) {
+        setCalData(newCalData)
+        setApproved(newApproved)
+      }
+    } catch (e) {
+      console.warn('Failed to load posts:', e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleGenerateWeek() {
+    setGenerating(true)
+    setGenToast('Generating your week...')
+    try {
+      const res = await fetch('/api/generate-week', { method: 'POST' })
+      const data = await res.json()
+      if (data.error) {
+        setGenToast('Error: ' + data.error)
+      } else {
+        setGenToast(`✓ Generated ${data.generated} posts`)
+        await loadPostsFromDB()
+      }
+    } catch (e) {
+      setGenToast('Generation failed — try again')
+    } finally {
+      setGenerating(false)
+      setTimeout(() => setGenToast(null), 4000)
+    }
+  }
 
   const modalPost     = modal ? calData[modal] : null
   const modalApproved = modal ? approved.has(modal) : false
@@ -142,6 +214,16 @@ export default function CalendarPage() {
             <button onClick={() => setOffset(o => o + 1)} className="w-7 h-7 rounded-lg border border-border bg-white text-muted flex items-center justify-center hover:border-accent hover:text-accent transition-colors text-base">›</button>
           </div>
         </div>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={handleGenerateWeek}
+            disabled={generating}
+            className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-1.5"
+          >
+            {generating ? (
+              <><span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />Generating...</>
+            ) : '✦ Generate week'}
+          </button>
         <div className="flex gap-1.5 flex-wrap">
           {(['all','linkedin','x','approved','overdue'] as Filter[]).map(f => (
             <button key={f} onClick={() => setFilter(f)}
@@ -336,6 +418,13 @@ export default function CalendarPage() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Gen toast */}
+      {genToast && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-text text-white rounded-xl px-4 py-3 text-sm font-semibold shadow-xl z-[60]">
+          {genToast}
         </div>
       )}
 
