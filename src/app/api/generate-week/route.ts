@@ -5,18 +5,27 @@ import { createUserClient } from '@/lib/supabase/server'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
-// 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun
-// Matches JS: getDay() 0=Sun,1=Mon...6=Sat → ourDow = jsDow===0 ? 7 : jsDow
-function getScheduledDates(activeDays: number[], daysAhead: number = 14): Date[] {
+// activeDays: 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun
+// Maps directly to: JS getDay() where 0=Sun,1=Mon...6=Sat
+// Our convention: shift so Mon=1...Sun=7 (Sun becomes 7 not 0)
+function getScheduledDates(activeDays: number[], daysAhead: number = 21): Date[] {
   const dates: Date[] = []
   const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  today.setHours(12, 0, 0, 0) // use noon to avoid DST issues
+
   for (let i = 0; i <= daysAhead; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
-    const jsDow = date.getDay()
-    const ourDow = jsDow === 0 ? 7 : jsDow
-    if (activeDays.includes(ourDow)) {
+    
+    // Get day name to verify
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
+    const dayMap: Record<string, number> = {
+      'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 
+      'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7
+    }
+    const ourDow = dayMap[dayName]
+    
+    if (ourDow && activeDays.includes(ourDow)) {
       dates.push(new Date(date))
     }
   }
