@@ -192,7 +192,7 @@ export default function CalendarPage() {
                   isTarget   ? 'border-accent border-2 bg-accent-light shadow-md' :
                   isToday    ? 'border-accent border-2 bg-orange-50 shadow-md' :
                   over       ? 'bg-red-50 border-red-200 cursor-pointer' :
-                  data       ? 'bg-[#F7FDFC] border-teal/30 cursor-pointer hover:border-accent hover:shadow-md' :
+                  data       ? 'bg-white border-border cursor-pointer hover:border-accent hover:shadow-md' :
                   isWeekend  ? 'bg-[#FAFAF8] border-[#EDEBE7]' :
                                'bg-white border-border',
                   dragging   ? 'opacity-25 scale-95 cursor-grabbing' : '',
@@ -209,16 +209,18 @@ export default function CalendarPage() {
 
                 {/* Post chip */}
                 {data ? (
-                  <div className="flex flex-col gap-0.5 flex-1 min-h-0">
-                    <div className={`text-[10px] font-bold rounded px-1.5 py-0.5 w-fit leading-tight ${
-                      isAp             ? 'bg-green-100 text-green-700' :
-                      data.platform === 'x' ? 'bg-slate-100 text-slate-600' :
-                                          'bg-blue-50 text-blue-600'
+                  <div className="flex flex-col flex-1 min-h-0 -mx-2 -mb-2 overflow-hidden rounded-b-xl">
+                    {/* Platform header strip */}
+                    <div className={`flex items-center gap-1 px-2 py-1 ${
+                      isAp ? 'bg-green-500' :
+                      data.platform === 'x' ? 'bg-slate-800' : 'bg-[#0A66C2]'
                     }`}>
-                      {data.platform === 'x' ? '𝕏' : 'in'} · {data.style}
+                      <span className="text-[10px] font-bold text-white">
+                        {isAp ? '✓ Approved' : data.platform === 'x' ? '𝕏 X/Twitter' : 'in LinkedIn'}
+                      </span>
+                      <span className="text-[9px] text-white/70 ml-auto">{data.style}</span>
                     </div>
-                    <p className="text-[10px] text-muted leading-snug line-clamp-2 mt-0.5">{data.preview}</p>
-                    {isAp && <div className="text-[9px] font-bold text-green-600 mt-auto pt-0.5">✓ Approved</div>}
+                    <p className="text-[10px] text-muted leading-snug line-clamp-2 px-2 pt-1.5 pb-1">{data.preview}</p>
                   </div>
                 ) : over ? (
                   <div className="text-[10px] font-bold text-red-500 bg-red-100 rounded px-1.5 py-0.5 w-fit">⚠ Missed</div>
