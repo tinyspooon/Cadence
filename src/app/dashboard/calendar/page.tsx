@@ -193,7 +193,7 @@ export default function CalendarPage() {
                   isToday    ? 'border-accent border-2 bg-orange-50 shadow-sm' :
                   over       ? 'bg-red-50 border-red-200 cursor-pointer' :
                   data && isAp ? 'bg-green-50 border-green-200 cursor-pointer hover:border-green-400 hover:shadow-md' :
-                  data && data.platform === 'x' ? 'bg-slate-50 border-slate-200 cursor-pointer hover:border-slate-400 hover:shadow-md' :
+                  data && data.platform === 'x' ? 'bg-zinc-900 border-zinc-700 cursor-pointer hover:border-zinc-500 hover:shadow-md' :
                   data       ? 'bg-blue-50 border-blue-200 cursor-pointer hover:border-blue-400 hover:shadow-md' :
                   isWeekend  ? 'bg-[#FAFAF8] border-[#EDEBE7]' :
                                'bg-white border-border',
@@ -203,7 +203,7 @@ export default function CalendarPage() {
               >
                 {/* Day number */}
                 <div className={`text-xs font-bold mb-1 flex items-center justify-between ${
-                  isToday ? 'text-accent' : isWeekend ? 'text-faint' : 'text-muted'
+                  isToday ? 'text-accent' : (data?.platform === 'x' && !isAp && !over) ? 'text-zinc-400' : isWeekend ? 'text-faint' : 'text-muted'
                 }`}>
                   <span>{d}</span>
                   {isToday && <span className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0" />}
@@ -216,14 +216,14 @@ export default function CalendarPage() {
                     <div className="flex items-center gap-1.5">
                       <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                         isAp             ? 'bg-green-200 text-green-800' :
-                        data.platform === 'x' ? 'bg-slate-200 text-slate-700' :
+                        data.platform === 'x' ? 'bg-zinc-700 text-white' :
                                               'bg-blue-200 text-blue-800'
                       }`}>
                         {isAp ? '✓ Done' : data.platform === 'x' ? '𝕏' : 'in'}
                       </span>
-                      <span className="text-[9px] font-semibold text-muted">{data.style}</span>
+                      <span className={`text-[9px] font-semibold ${data.platform === 'x' && !isAp ? 'text-zinc-400' : 'text-muted'}`}>{data.style}</span>
                     </div>
-                    <p className="text-[11px] text-text/80 leading-snug line-clamp-3 font-medium">{data.preview}</p>
+                    <p className={`text-[11px] leading-snug line-clamp-3 font-medium ${data.platform === 'x' && !isAp ? 'text-zinc-300' : 'text-text/80'}`}>{data.preview}</p>
                   </div>
                 ) : over ? (
                   <div className="text-[10px] font-bold text-red-500 bg-red-100 rounded px-1.5 py-0.5 w-fit">⚠ Missed</div>
