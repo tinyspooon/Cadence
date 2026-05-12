@@ -77,17 +77,19 @@ export default function CalendarPage() {
         if (!post.scheduled_for && post.status !== 'posted') return
         const dateStr = (post.scheduled_for || post.posted_at) as string
         if (!dateStr) return
-        const postDate = new Date(dateStr)
-        if (postDate.getFullYear() !== year || postDate.getMonth() !== month) return
-        const day = postDate.getDate()
-        newCalData[day] = {
+        // Parse date string directly to avoid UTC→local timezone shift
+        // new Date('2026-05-18') in UTC-5 becomes May 17 locally — wrong
+        const datePart = String(dateStr).split('T')[0]
+        const [y, m, d] = datePart.split('-').map(Number)
+        if (y !== year || m !== month + 1) return
+        newCalData[d] = {
           platform: (post.platform as Platform) || 'linkedin',
           style: (post.style as string) || 'Story',
           preview: ((post.content as string) || '').split('\n')[0].substring(0, 80),
           full: (post.content as string) || '',
         }
         if (post.status === 'approved') {
-          newApproved.add(day)
+          newApproved.add(d)
         }
       })
 
