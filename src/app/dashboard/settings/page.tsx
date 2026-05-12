@@ -125,16 +125,22 @@ export default function SettingsPage() {
 
   const [saved, setSaved] = useState(false)
 
-  const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+  // Explicit day values - no index arithmetic
+  const DAYS = [
+    { label: 'Mon', value: 1 },
+    { label: 'Tue', value: 2 },
+    { label: 'Wed', value: 3 },
+    { label: 'Thu', value: 4 },
+    { label: 'Fri', value: 5 },
+    { label: 'Sat', value: 6 },
+    { label: 'Sun', value: 7 },
+  ]
   const totalAllocated = Object.values(platformAlloc).reduce((a, b) => a + b, 0)
 
-  function toggleDay(i: number) {
-    // i is 0-based index, but we want days 1-7 where Sun=7
-    // DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] so i+1 gives 1=Mon...7=Sun
-    const day = i + 1
+  function toggleDay(value: number) {
     setActiveDays(prev => {
-      const nums = prev.map(d => typeof d === 'string' ? parseInt(d, 10) : d)
-      return nums.includes(day) ? nums.filter(d => d !== day) : [...nums, day].sort()
+      const nums = prev.map(d => parseInt(String(d), 10))
+      return nums.includes(value) ? nums.filter(d => d !== value) : [...nums, value].sort()
     })
   }
 
@@ -353,13 +359,13 @@ export default function SettingsPage() {
           <div>
             <label className="block text-xs font-bold text-muted uppercase tracking-wide mb-2">Active days</label>
             <div className="flex gap-1.5">
-              {DAYS.map((d, i) => (
-                <button key={d} onClick={() => toggleDay(i)}
+              {DAYS.map(({ label, value }) => (
+                <button key={value} onClick={() => toggleDay(value)}
                   className={`flex-1 py-2 rounded-xl border text-xs font-bold transition-all ${
-                    activeDays.map(d => typeof d === 'string' ? parseInt(d, 10) : d).includes(i + 1)
+                    activeDays.map(d => parseInt(String(d), 10)).includes(value)
                       ? 'bg-accent-light border-accent text-accent'
                       : 'bg-white border-border2 text-muted hover:border-accent hover:text-accent'
-                  }`}>{d}</button>
+                  }`}>{label}</button>
               ))}
             </div>
           </div>
