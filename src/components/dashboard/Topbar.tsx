@@ -31,7 +31,7 @@ export default function Topbar({ name: clerkName }: { name: string }) {
           const d = String(p.posted_at).split('T')[0]
           return d
         })
-      const uniqueDays = [...new Set(posted)].sort().reverse() as string[]
+      const uniqueDays = Array.from(new Set(posted)).sort().reverse() as string[]
       if (!uniqueDays.length) return
       let s = 0
       const today = new Date()
