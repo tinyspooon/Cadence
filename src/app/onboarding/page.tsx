@@ -141,17 +141,17 @@ export default function OnboardingPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">Your name</label>
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Oli Elliott"
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Alex Morgan"
                     className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">Your role / title</label>
-                  <input value={role} onChange={e => setRole(e.target.value)} placeholder="Head of SDR"
+                  <input value={role} onChange={e => setRole(e.target.value)} placeholder="VP of Sales"
                     className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">Company</label>
-                  <input value={company} onChange={e => setCompany(e.target.value)} placeholder="Pepper"
+                  <input value={company} onChange={e => setCompany(e.target.value)} placeholder="Acme Corp"
                     className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors" />
                 </div>
               </div>
@@ -167,19 +167,19 @@ export default function OnboardingPage() {
                 <div>
                   <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">One-liner description</label>
                   <input value={oneLiner} onChange={e => setOneLiner(e.target.value)}
-                    placeholder="e.g. AI-powered order management for food distributors"
+                    placeholder="e.g. AI-powered sales intelligence for B2B teams"
                     className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">Target customer <span className="text-[#9B9590] normal-case font-normal">(optional)</span></label>
                   <input value={targetCustomer} onChange={e => setTargetCustomer(e.target.value)}
-                    placeholder="e.g. Independent food & beverage distributors"
+                    placeholder="e.g. B2B SaaS companies with 50-500 employees"
                     className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">Problem you solve <span className="text-[#9B9590] normal-case font-normal">(optional)</span></label>
                   <textarea value={problemSolved} onChange={e => setProblemSolved(e.target.value)} rows={2}
-                    placeholder="e.g. Distributors are stuck on phone orders and spreadsheets, losing customers to faster competitors"
+                    placeholder="e.g. Sales teams waste hours on manual research instead of selling"
                     className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors resize-none" />
                 </div>
                 <div>

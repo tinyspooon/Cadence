@@ -19,7 +19,7 @@ interface TeamMember {
 const TEAM: TeamMember[] = [
   { id: '1', name: 'Ryan Callahan',        role: 'SDR',         avatar: 'K', color: '#FF5C35', postsThisMonth: 14, streak: 9,  consistency: 94, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
   { id: '2', name: 'Jamie Torres',   role: 'SDR',         avatar: 'B', color: '#7C4DFF', postsThisMonth: 11, streak: 6,  consistency: 82, topStyle: 'Insight',     lastPosted: 'Yesterday', status: 'active' },
-  { id: '3', name: 'Alex Morgan',        role: 'Head of SDR', avatar: 'O', color: '#0EA47A', postsThisMonth: 9,  streak: 3,  consistency: 78, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
+  { id: '3', name: 'Alex Morgan',        role: 'VP of Sales', avatar: 'A', color: '#0EA47A', postsThisMonth: 9,  streak: 3,  consistency: 78, topStyle: 'Story',       lastPosted: 'Today',     status: 'active' },
   { id: '4', name: 'Sam Fletcher',        role: 'SDR',         avatar: 'D', color: '#D97706', postsThisMonth: 8,  streak: 4,  consistency: 71, topStyle: 'Observation', lastPosted: '2 days ago',status: 'active' },
   { id: '5', name: 'Priya Sharma', role: 'SDR',         avatar: 'C', color: '#0A66C2', postsThisMonth: 6,  streak: 2,  consistency: 58, topStyle: 'Insight',     lastPosted: '3 days ago',status: 'at-risk' },
   { id: '6', name: 'Ben Wallace',      role: 'SDR',         avatar: 'L', color: '#9333EA', postsThisMonth: 5,  streak: 1,  consistency: 45, topStyle: 'Story',       lastPosted: '4 days ago',status: 'at-risk' },
