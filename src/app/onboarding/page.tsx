@@ -75,15 +75,20 @@ export default function OnboardingPage() {
           problem_solved: problemSolved,
           content_mix: contentMix,
           topics,
-          active_days: activeDays,
-          posts_per_day: postsPerDay,
+          active_days: activeDays.map(d => Number(d)),
+          posts_per_day: Number(postsPerDay),
           enabled_platforms: ['linkedin'],
         }),
       })
 
+      // Small delay to ensure DB write is complete
+      await new Promise(resolve => setTimeout(resolve, 500))
+
       // Generate first week
       setGenerating(true)
-      await fetch('/api/generate-week', { method: 'POST' })
+      const genRes = await fetch('/api/generate-week', { method: 'POST' })
+      const genData = await genRes.json()
+      console.log('Generate week result:', genData)
 
       router.push('/dashboard/calendar')
     } catch (e) {

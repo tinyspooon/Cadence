@@ -186,8 +186,8 @@ export async function POST(req: Request) {
 
   if (postsToCreate.length === 0) {
     return NextResponse.json({ 
-      error: 'No posts generated', 
-      debug: { activeDays, rawDays: profile.active_days }
+      error: 'No posts generated — check your active days in Settings',
+      debug: { activeDays, rawDays: profile.active_days, scheduledDates: scheduledDates.map(d => d.toISOString().split('T')[0]) }
     }, { status: 400 })
   }
 
