@@ -138,6 +138,8 @@ export async function POST(req: Request) {
   const postsToCreate: Record<string, unknown>[] = []
   let topicIndex = 0
 
+  const groqErrors: string[] = []
+
   for (const date of scheduledDates) {
     for (let p = 0; p < postsPerDay; p++) {
       const platform = platforms[p % platforms.length] ?? 'linkedin'
@@ -152,8 +154,7 @@ export async function POST(req: Request) {
           temperature: 0.85,
         })
 
-        const raw = completion.choices[0]?.message?.content?.trim() ?? ''
-        let text = raw
+        const raw = completion.choices[0]?.message?.content?.trim() ?? ''        let text = raw
           .replace(/\*\*(.*?)\*\*/g, '$1')
           .replace(/\*(.*?)\*/g, '$1')
           .replace(/#{1,6}\s/g, '')
@@ -178,16 +179,21 @@ export async function POST(req: Request) {
           scheduled_for: date.toISOString().split('T')[0],
           model_used: 'llama-3.3-70b-versatile',
         })
-      } catch (e) {
-        console.error('Groq generation failed for', date, e)
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        console.error('Groq generation failed for', date.toISOString().split('T')[0], msg)
+        groqErrors.push(`${date.toISOString().split('T')[0]}: ${msg}`)
+        if (msg.includes('rate') || msg.includes('429')) {
+          break
+        }
       }
     }
   }
 
   if (postsToCreate.length === 0) {
     return NextResponse.json({ 
-      error: 'No posts generated — check your active days in Settings',
-      debug: { activeDays, rawDays: profile.active_days, scheduledDates: scheduledDates.map(d => d.toISOString().split('T')[0]) }
+      error: 'No posts generated — Groq API may be rate limited. Try again in a minute.',
+      debug: { activeDays, scheduledDates: scheduledDates.map(d => d.toISOString().split('T')[0]), groqErrors }
     }, { status: 400 })
   }
 
