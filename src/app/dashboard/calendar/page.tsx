@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import PageHeader from '@/components/dashboard/PageHeader'
 
 type Platform = 'linkedin' | 'x'
 type Filter = 'all' | 'linkedin' | 'x' | 'approved' | 'overdue'

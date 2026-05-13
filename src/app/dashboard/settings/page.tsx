@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import PageHeader from '@/components/dashboard/PageHeader'
 
 // ── Types ──────────────────────────────────────────
 type PlatformKey = 'linkedin' | 'x' | 'instagram' | 'facebook' | 'tiktok'
@@ -170,7 +171,6 @@ export default function SettingsPage() {
 
   async function handleSave() {
     setSaved(true)
-    console.log('Saving active_days:', activeDays)
     try {
       await fetch('/api/profile', {
         method: 'POST',

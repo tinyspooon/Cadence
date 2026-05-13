@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import PageHeader from '@/components/dashboard/PageHeader'
 
 type Platform = 'linkedin' | 'x'
 type Status = 'draft' | 'scheduled' | 'approved' | 'posted'
@@ -170,27 +171,27 @@ export default function QueuePage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="bg-white border-b border-border px-8 py-3.5 flex items-center justify-between sticky top-0 z-10">
-        <div>
-          <div className="font-serif text-xl font-extrabold tracking-tight text-text">Queue</div>
-          <div className="text-xs text-muted mt-0.5">{total} post{total !== 1 ? 's' : ''} {filter === 'all' ? 'total' : `in ${filter}`}</div>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <div className="flex gap-1.5">
-            {(['all', 'draft', 'scheduled', 'approved', 'posted'] as const).map(f => (
-              <button key={f} onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all ${
-                  filter === f ? 'bg-accent-light border-accent text-accent' : 'bg-white border-border2 text-muted hover:border-accent hover:text-accent'
-                }`}>
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
+      <PageHeader
+        title="Queue"
+        subtitle={`${total} post${total !== 1 ? 's' : ''} ${filter === 'all' ? 'total' : `in ${filter}`}`}
+        action={
+          <div className="flex items-center gap-2.5">
+            <div className="flex gap-1.5">
+              {(['all', 'draft', 'scheduled', 'approved', 'posted'] as const).map(f => (
+                <button key={f} onClick={() => setFilter(f)}
+                  className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all ${
+                    filter === f ? 'bg-accent-light border-accent text-accent' : 'bg-white border-border2 text-muted hover:border-accent hover:text-accent'
+                  }`}>
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+            <button onClick={addPost} className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+              + New post
+            </button>
           </div>
-          <button onClick={addPost} className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
-            + New post
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="max-w-2xl mx-auto px-6 py-6">
         {loading ? (

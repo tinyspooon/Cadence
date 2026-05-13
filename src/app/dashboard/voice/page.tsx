@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import PageHeader from '@/components/dashboard/PageHeader'
 
 // ── Types ──────────────────────────────────────────
 interface VoiceSettings {
@@ -66,6 +67,7 @@ export default function VoicePage() {
   function update<K extends keyof VoiceSettings>(key: K, val: VoiceSettings[K]) {
     setSettings(prev => {
       const next = { ...prev, [key]: val }
+      // Sync length slider ↔ postLength buttons bidirectionally
       if (key === 'length') {
         const v = val as number
         next.postLength = v <= 33 ? 'short' : v <= 66 ? 'medium' : 'long'
