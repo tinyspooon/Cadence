@@ -64,7 +64,17 @@ export default function VoicePage() {
   const [saved, setSaved]       = useState(false)
 
   function update<K extends keyof VoiceSettings>(key: K, val: VoiceSettings[K]) {
-    setSettings(prev => ({ ...prev, [key]: val }))
+    setSettings(prev => {
+      const next = { ...prev, [key]: val }
+      if (key === 'length') {
+        const v = val as number
+        next.postLength = v <= 33 ? 'short' : v <= 66 ? 'medium' : 'long'
+      }
+      if (key === 'postLength') {
+        next.length = val === 'short' ? 15 : val === 'medium' ? 50 : 85
+      }
+      return next
+    })
   }
 
   async function handleSave() {
