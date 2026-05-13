@@ -56,8 +56,8 @@ function buildPostPrompt(profile: Record<string, unknown>, voice: Record<string,
     voice.bold_hook !== false && 'Start with a bold single-line hook',
     voice.short_paragraphs !== false && 'One sentence per paragraph',
     voice.end_with_cta !== false && 'End with a question or direct observation',
-    !voice.use_emojis && 'No emojis',
-    !voice.use_hashtags && 'No hashtags',
+    voice.use_emojis ? 'Use 1-2 relevant emojis naturally' : 'No emojis',
+    voice.use_hashtags ? `Add ${voice.max_hashtags || 3} relevant hashtags at the end` : 'No hashtags',
   ].filter(Boolean).join('. ')
 
   let companyNote = ''

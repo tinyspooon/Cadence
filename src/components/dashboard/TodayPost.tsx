@@ -33,8 +33,8 @@ function buildPrompt(p: Profile, v: VoiceSettings): string {
     v.bold_hook !== false && 'Start with a bold single-line hook',
     v.short_paragraphs !== false && 'One sentence per paragraph',
     v.end_with_cta !== false && 'End with a question or direct observation',
-    !v.use_emojis && 'No emojis',
-    !v.use_hashtags && 'No hashtags',
+    v.use_emojis ? 'Use 1-2 relevant emojis naturally in the post' : 'No emojis',
+    v.use_hashtags ? `Add ${v.max_hashtags || 3} relevant hashtags at the end` : 'No hashtags',
   ].filter(Boolean).join('. ')
 
   let companyNote = ''
