@@ -143,6 +143,26 @@ export default function QueuePage() {
     setEditing(null)
   }
 
+  async function handleRegen(post: Post) {
+    setRegenning(post.id)
+    try {
+      const res = await fetch('/api/regen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: post.id }),
+      })
+      const data = await res.json()
+      if (data.content) {
+        setPosts(prev => prev.map(p => p.id === post.id ? {
+          ...p,
+          full: data.content,
+          preview: data.content.split('\n')[0].substring(0, 100),
+        } : p))
+      }
+    } catch (e) { console.warn('Regen failed:', e) }
+    finally { setRegenning(null) }
+  }
+
   async function addPost() {
     try {
       const res = await fetch('/api/posts', {
@@ -293,7 +313,12 @@ export default function QueuePage() {
                             </button>
                             <button onClick={() => { setEditing(post.id); setEditContent(post.full) }}
                               className="flex-1 py-2 rounded-lg border border-border2 text-xs font-bold text-text hover:bg-surface transition-colors">Edit</button>
-                            <button className="flex-1 py-2 rounded-lg border border-accent/25 bg-accent-light text-accent text-xs font-bold hover:border-accent transition-colors">↺ Regen</button>
+                            <button
+                              onClick={() => handleRegen(post)}
+                              disabled={regenning === post.id}
+                              className="flex-1 py-2 rounded-lg border border-accent/25 bg-accent-light text-accent text-xs font-bold hover:border-accent transition-colors disabled:opacity-50">
+                              {regenning === post.id ? '...' : '↺ Regen'}
+                            </button>
                           </>
                         )}
                       </div>
