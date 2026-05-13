@@ -81,6 +81,28 @@ export default function OnboardingPage() {
         }),
       })
 
+      // Create default voice settings so generate-week never hits null
+      await fetch('/api/voice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tone: 25,
+          length: 50,
+          story: 40,
+          provocative: 65,
+          boldHook: true,
+          shortParagraphs: true,
+          rhetoricalQuestions: false,
+          endWithCta: true,
+          personalStories: true,
+          hashtags: false,
+          maxHashtags: 3,
+          emojis: false,
+          postLength: 'medium',
+          voiceSamples: [],
+        }),
+      })
+
       // Small delay to ensure DB write is complete
       await new Promise(resolve => setTimeout(resolve, 500))
 
@@ -166,7 +188,7 @@ export default function OnboardingPage() {
           {/* Step 1 — What do you sell */}
           {step === 1 && (
             <div>
-              <h2 className="font-sans text-xl font-bold text-[#1F1F1F] mb-1">What does {company || 'your company'} do?</h2>
+              <h2 className="font-sans text-xl font-bold text-[#1F1F1F] mb-1">What does {company.trim() || 'your company'} do?</h2>
               <p className="text-sm text-[#6B6560] mb-6">Cadence will weave this in naturally when relevant</p>
               <div className="space-y-4">
                 <div>
