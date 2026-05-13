@@ -45,6 +45,7 @@ export default function OnboardingPage() {
   // Step 4
   const [activeDays, setActiveDays] = useState<number[]>([1,2,3,4,5])
   const [postsPerDay, setPostsPerDay] = useState(1)
+  const [linkedinUrl, setLinkedinUrl] = useState('')
 
   function toggleTopic(t: string) {
     setTopics(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])
@@ -78,6 +79,7 @@ export default function OnboardingPage() {
           active_days: activeDays.map(d => Number(d)),
           posts_per_day: Number(postsPerDay),
           enabled_platforms: ['linkedin'],
+          linkedin_url: linkedinUrl,
         }),
       })
 
@@ -295,6 +297,17 @@ export default function OnboardingPage() {
                   <div className="text-xs text-[#6B6560]">
                     {activeDays.map(d => DAYS.find(x => x.value === d)?.label).join(', ')} · {postsPerDay} post{postsPerDay > 1 ? 's' : ''}/day
                   </div>
+                </div>
+
+                {/* LinkedIn URL */}
+                <div>
+                  <label className="block text-xs font-bold text-[#1F1F1F] uppercase tracking-wide mb-1.5">
+                    LinkedIn profile URL <span className="text-[#9B9590] normal-case font-normal">(optional)</span>
+                  </label>
+                  <input value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)}
+                    placeholder="e.g. linkedin.com/in/yourname"
+                    className="w-full px-3.5 py-2.5 border-2 border-[#ECE7E2] rounded-xl text-sm focus:outline-none focus:border-[#FF6B3D] transition-colors" />
+                  <p className="text-xs text-[#9B9590] mt-1.5">Used to link your posts and track engagement later</p>
                 </div>
               </div>
             </div>

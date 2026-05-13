@@ -70,8 +70,8 @@ ${styleRules.map((r, i) => `${i + 1}. ${r}`).join('\n')}
 ${v.short_paragraphs !== false ? `${styleRules.length + 1}. Every sentence on its own line. No multi-sentence paragraphs.` : ''}
 ${v.end_with_cta !== false ? `${styleRules.length + 2}. End with one short direct question.` : ''}
 ${v.bold_hook !== false ? `${styleRules.length + 3}. First line: single punchy hook.` : ''}
-${!v.use_emojis ? '- No emojis.' : ''}
-${!v.use_hashtags ? '- No hashtags.' : ''}
+${v.use_emojis ? '- Use 1-2 relevant emojis naturally in the post.' : '- No emojis.'}
+${v.use_hashtags ? `- Add ${v.max_hashtags || 3} relevant hashtags at the end.` : '- No hashtags.'}
 
 OPENING: ${opening}
 LENGTH: ${words} words.${companyNote}
