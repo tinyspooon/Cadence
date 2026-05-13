@@ -13,27 +13,13 @@ interface CalPost {
   full: string
 }
 
-const INITIAL_CAL_DATA: Record<number, CalPost> = {
-  2:  { platform: 'linkedin', style: 'Story',       preview: 'Why I hire for curiosity over experience in SDR roles',        full: "Why I hire for curiosity over experience in SDR roles.\n\nI've interviewed hundreds of SDR candidates. The ones who stand out aren't the ones with the best CV.\n\nThey're the ones who ask the best questions.\n\n\"How does your team decide which accounts to prioritise?\" \"What does a great first call look like here?\"\n\nCuriosity is a multiplier. Experience is a starting point. You can teach process. You can't teach hunger." },
-  5:  { platform: 'linkedin', style: 'Insight',     preview: 'The pipeline metric everyone ignores',                         full: "The pipeline metric everyone ignores: ICP account coverage.\n\nEvery team tracks pipeline created. Almost no team tracks what percentage of their Tier 1 ICP accounts have had a meaningful conversation in the last 90 days.\n\nThat number predicts your pipeline 6–8 weeks out better than anything else.\n\nIf it drops below 40%, you're about to have a bad quarter. Every time." },
-  8:  { platform: 'x',        style: 'Observation', preview: 'SDR metrics that actually matter vs ones that sound good',     full: "SDR metrics that actually matter vs ones that sound good.\n\nMatters: Pipeline created, SAO rate, avg deal size sourced.\nSounds good: Dials, emails sent, activities logged.\n\nYour CRO doesn't care how busy your team looks." },
-  9:  { platform: 'linkedin', style: 'Story',       preview: 'What 3 months of multi-threading taught me about patience',   full: "What 3 months of multi-threading taught me about patience.\n\nWe touched 6 stakeholders before the deal closed. Some took 8 follow-ups. One ghosted for 3 weeks and came back with budget.\n\nThe rep who wanted to \"just move on\" after week 4 — he's glad he didn't.\n\nMulti-threading isn't a tactic. It's a test of whether you believe in the account enough to keep showing up." },
-  12: { platform: 'x',        style: 'Observation', preview: 'Hot take: SDR to AE handoff is where most deals die',         full: "Hot take: the SDR to AE handoff is where most deals die.\n\nNot bad prospecting. Not bad demos. The handoff.\n\nFix your internal communication before blaming the market." },
-  15: { platform: 'linkedin', style: 'Story',       preview: 'The rep who asked the wrong questions — and learned from it', full: "The rep who asked the wrong questions — and learned from it.\n\nEarly in his tenure, one of my SDRs was asking discovery questions that sounded great on paper but went nowhere.\n\n\"What are your biggest challenges?\" Dead end.\n\nWe swapped to: \"What did you try last time this came up?\" Game changer.\n\nThe best discovery questions don't ask people to diagnose themselves. They ask them to tell stories." },
-  16: { platform: 'linkedin', style: 'Insight',     preview: 'Contrarian take on activity-based selling',                  full: "Contrarian take: activity-based selling is making your team worse.\n\nWhen reps hit their call targets, they stop thinking. When they hit their email quotas, they stop personalising.\n\nThe goal was never 80 dials. The goal was 3 great conversations.\n\nOptimise for quality of interaction, not volume of activity. Your pipeline will look different in 60 days." },
-  19: { platform: 'linkedin', style: 'Story',       preview: 'How we rebuilt our ICP from scratch in Q1',                  full: "How we rebuilt our ICP from scratch in Q1 — and what happened next.\n\nWe had a wide ICP. \"Any company with a sales team.\" That's not an ICP, that's a prayer.\n\nTurns out: independent distributors with 15–80 employees were closing at 3× the rate of everyone else.\n\nWe went narrow. SAO rate went from 28% to 47% in one quarter." },
-  22: { platform: 'x',        style: 'Observation', preview: 'What separates a 50% SAO rate from a 30% one',               full: "What separates a 50% SAO rate from a 30% one?\n\nNot talent. Not territory. Not tools.\n\nIt's whether the rep actually researched the account before reaching out.\n\nEvery time." },
-  26: { platform: 'linkedin', style: 'Insight',     preview: 'The question I ask every SDR in their 1:1',                  full: "The one question I ask every SDR in their 1:1.\n\n\"What's one account you've written off that you shouldn't have?\"\n\nIt forces them to revisit assumptions. It uncovers deals abandoned too early. And it tells me immediately whether they're thinking like a hunter or just managing a list.\n\nThe best reps always have an answer. The reps who are coasting never do." },
-}
-
-const OVERDUE_DAYS = [1, 3]
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const DOWS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 
 export default function CalendarPage() {
   const [offset, setOffset]         = useState(0)
   const [filter, setFilter]         = useState<Filter>('all')
-  const [calData, setCalData]       = useState(INITIAL_CAL_DATA)
+  const [calData, setCalData]       = useState<Record<number, CalPost>>({})
   const [approved, setApproved]     = useState<Set<number>>(new Set())
   const [loading, setLoading]       = useState(true)
   const [generating, setGenerating] = useState(false)
@@ -128,7 +114,12 @@ export default function CalendarPage() {
   const modalPost     = modal ? calData[modal] : null
   const modalApproved = modal ? approved.has(modal) : false
 
-  function isOverdue(d: number) { return isNow && OVERDUE_DAYS.includes(d) }
+  function isOverdue(d: number) {
+    // A day is overdue if it's in the past and had a scheduled post that wasn't posted
+    const today = new Date(); today.setHours(0,0,0,0)
+    const checkDate = new Date(year, month, d)
+    return isNow && checkDate < today && !!calData[d]
+  }
 
   function showToast(msg: string) {
     setToast(msg)
