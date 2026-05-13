@@ -17,10 +17,7 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen bg-bg">
       <Sidebar />
       <div className="flex-1 ml-[210px] flex flex-col min-h-screen">
-        <Topbar
-          name={user?.firstName ?? 'there'}
-          imageUrl={user?.imageUrl}
-        />
+        <Topbar name={user?.firstName ?? 'there'} />
         <main className="flex-1">
           {children}
         </main>
