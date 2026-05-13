@@ -154,7 +154,8 @@ export async function POST(req: Request) {
           temperature: 0.85,
         })
 
-        const raw = completion.choices[0]?.message?.content?.trim() ?? ''        let text = raw
+        const raw = completion.choices[0]?.message?.content?.trim() ?? ''
+        let text = raw
           .replace(/\*\*(.*?)\*\*/g, '$1')
           .replace(/\*(.*?)\*/g, '$1')
           .replace(/#{1,6}\s/g, '')
