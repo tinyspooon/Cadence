@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 
 const PREVIEW_POSTS = [
   {
@@ -30,6 +32,14 @@ const PREVIEW_POSTS = [
 export default function HomePage() {
   const [cardIndex, setCardIndex] = useState(0)
   const [fading, setFading] = useState(false)
+  const { isSignedIn, isLoaded } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.push('/dashboard')
+    }
+  }, [isLoaded, isSignedIn, router])
 
   useEffect(() => {
     const interval = setInterval(() => {
