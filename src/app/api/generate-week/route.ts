@@ -123,6 +123,7 @@ export async function POST(req: Request) {
   const postsPerDay: number = profile.posts_per_day ?? 1
   const platforms: string[] = profile.enabled_platforms ?? ['linkedin']
   const voiceData = voice ?? {}
+  const safeVoice: Record<string, unknown> = voiceData || {}
 
   // Delete existing future scheduled posts
   const today = new Date()
@@ -143,7 +144,7 @@ export async function POST(req: Request) {
   for (const date of scheduledDates) {
     for (let p = 0; p < postsPerDay; p++) {
       const platform = platforms[p % platforms.length] ?? 'linkedin'
-      const prompt = buildPostPrompt(profile, voiceData, topicIndex)
+      const prompt = buildPostPrompt(profile, safeVoice, topicIndex)
       topicIndex++
 
       try {
@@ -162,7 +163,7 @@ export async function POST(req: Request) {
           .trim()
 
         // Force sentence-per-line if short paragraphs enabled
-        if (voice.short_paragraphs !== false) {
+        if (safeVoice.short_paragraphs !== false) {
           text = text
             .replace(/([.!?])\s+([A-Z])/g, '$1\n$2')
             .replace(/\n{3,}/g, '\n\n')
