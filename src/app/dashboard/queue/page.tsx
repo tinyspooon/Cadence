@@ -60,8 +60,29 @@ export default function QueuePage() {
   const [editing, setEditing] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [copied, setCopied] = useState<string | null>(null)
+  const [regenning, setRegenning] = useState<string | null>(null)
 
   useEffect(() => { loadPosts() }, [])
+
+  async function handleRegen(post: Post) {
+    setRegenning(post.id)
+    try {
+      const res = await fetch('/api/regen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: post.id }),
+      })
+      const data = await res.json()
+      if (data.content) {
+        setPosts(prev => prev.map(p => p.id === post.id ? {
+          ...p,
+          full: data.content,
+          preview: data.content.split('\n')[0].substring(0, 100),
+        } : p))
+      }
+    } catch (e) { console.warn('Regen failed:', e) }
+    finally { setRegenning(null) }
+  }
 
   async function loadPosts() {
     setLoading(true)
@@ -141,26 +162,6 @@ export default function QueuePage() {
       } : p))
     } catch (e) { console.warn('Failed to save edit:', e) }
     setEditing(null)
-  }
-
-  async function handleRegen(post: Post) {
-    setRegenning(post.id)
-    try {
-      const res = await fetch('/api/regen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId: post.id }),
-      })
-      const data = await res.json()
-      if (data.content) {
-        setPosts(prev => prev.map(p => p.id === post.id ? {
-          ...p,
-          full: data.content,
-          preview: data.content.split('\n')[0].substring(0, 100),
-        } : p))
-      }
-    } catch (e) { console.warn('Regen failed:', e) }
-    finally { setRegenning(null) }
   }
 
   async function addPost() {
