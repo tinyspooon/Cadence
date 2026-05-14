@@ -134,7 +134,7 @@ export default function QueuePage() {
       ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.full.substring(0, 270))}`
       : 'https://www.linkedin.com/feed/?shareActive=true'
     window.open(url, '_blank')
-    navigator.clipboard?.writeText(post.full).catch(() => {})
+    navigator.clipboard?.writeText(post.full.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n')).catch(() => {})
     setCopied(post.id)
     setTimeout(() => setCopied(null), 2000)
 

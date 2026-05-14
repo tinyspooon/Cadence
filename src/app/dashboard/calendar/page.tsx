@@ -164,14 +164,14 @@ export default function CalendarPage() {
       : 'https://www.linkedin.com/feed/?shareActive=true'
     window.open(url, '_blank')
     setApproved(prev => new Set(prev).add(modal))
-    navigator.clipboard?.writeText(modalPost.full).catch(() => {})
+    navigator.clipboard?.writeText(modalPost.full.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n')).catch(() => {})
     setCopied(true)
     showToast(modalPost.platform === 'x' ? '𝕏 Opening X — text pre-filled' : '💼 Opening LinkedIn — paste and click Post')
   }
 
   function handleCopy() {
     if (!modalPost) return
-    navigator.clipboard?.writeText(modalPost.full)
+    navigator.clipboard?.writeText(modalPost.full.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n'))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
