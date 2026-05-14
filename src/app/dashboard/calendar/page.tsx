@@ -7,6 +7,7 @@ type Platform = 'linkedin' | 'x'
 type Filter = 'all' | 'linkedin' | 'x' | 'approved' | 'overdue'
 
 interface CalPost {
+  id?: string
   platform: Platform
   style: string
   preview: string
@@ -24,6 +25,7 @@ export default function CalendarPage() {
   const [loading, setLoading]       = useState(true)
   const [generating, setGenerating] = useState(false)
   const [genToast, setGenToast]     = useState<string | null>(null)
+  const [regenning, setRegenning]   = useState(false)
   const [modal, setModal]           = useState<number | null>(null)
   const [editMode, setEditMode]     = useState(false)
   const [editContent, setEdit]      = useState('')
@@ -70,6 +72,7 @@ export default function CalendarPage() {
         const [y, m, d] = datePart.split('-').map(Number)
         if (y !== year || m !== month + 1) return
         newCalData[d] = {
+          id: post.id as string,
           platform: (post.platform as Platform) || 'linkedin',
           style: (post.style as string) || 'Story',
           preview: ((post.content as string) || '').split('\n')[0].substring(0, 80),
@@ -109,6 +112,30 @@ export default function CalendarPage() {
       setGenerating(false)
       setTimeout(() => setGenToast(null), 4000)
     }
+  }
+
+  async function handleRegen() {
+    if (!modal || !modalPost?.id) return
+    setRegenning(true)
+    try {
+      const res = await fetch('/api/regen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: modalPost.id }),
+      })
+      const data = await res.json()
+      if (data.content) {
+        setCalData(prev => ({
+          ...prev,
+          [modal]: {
+            ...prev[modal],
+            full: data.content,
+            preview: data.content.split('\n')[0].substring(0, 80),
+          }
+        }))
+      }
+    } catch (e) { console.warn('Regen failed:', e) }
+    finally { setRegenning(false) }
   }
 
   const modalPost     = modal ? calData[modal] : null
@@ -410,7 +437,12 @@ export default function CalendarPage() {
                       ✓ Approve + Post
                     </button>
                     <button onClick={() => { setEditMode(true); setEdit(modalPost.full) }} className="flex-1 py-2.5 rounded-xl border border-border2 text-sm font-bold text-text hover:bg-surface transition-colors">Edit</button>
-                    <button className="flex-1 py-2.5 rounded-xl border border-accent/30 bg-accent-light text-accent text-sm font-bold hover:border-accent transition-colors">↺ Regen</button>
+                    <button
+                      onClick={handleRegen}
+                      disabled={regenning}
+                      className="flex-1 py-2.5 rounded-xl border border-accent/30 bg-accent-light text-accent text-sm font-bold hover:border-accent transition-colors disabled:opacity-50">
+                      {regenning ? '...' : '↺ Regen'}
+                    </button>
                     <button onClick={handleCopy} className="flex-1 py-2.5 rounded-xl border border-border2 text-sm font-bold text-muted hover:bg-surface transition-colors">
                       {copied ? '✓' : 'Copy'}
                     </button>
