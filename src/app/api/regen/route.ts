@@ -1,9 +1,9 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import Groq from 'groq-sdk'
 import { createUserClient } from '@/lib/supabase/server'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 export async function POST(req: Request) {
   const { userId } = await auth()
@@ -78,11 +78,15 @@ LENGTH: ${words} words.${companyNote}
 Return ONLY the post text.`
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' })
-    const result = await model.generateContent(prompt)
-    const raw = result.response.text()
-    const usage = result.response.usageMetadata
-    console.log(`[regen] PostID: ${postId} | in:${usage?.promptTokenCount} out:${usage?.candidatesTokenCount}`)
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: postLength === 'short' ? 150 : postLength === 'long' ? 450 : 250,
+      temperature: 0.9,
+    })
+    const raw = completion.choices[0]?.message?.content?.trim() ?? ''
+    const usage = completion.usage
+    console.log(`[regen] PostID: ${postId} | in:${usage?.prompt_tokens} out:${usage?.completion_tokens}`)
     let text = raw
     text = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').replace(/#{1,6}\s/g, '').trim()
     if (v.short_paragraphs !== false) {
