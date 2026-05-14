@@ -121,15 +121,19 @@ export default function TodayPost({ userId }: { userId: string }) {
       const v = vData.voice ?? {}
       setProfile(p); setVoice(v)
 
-      // Check for today's scheduled post in DB first
+      // Check for today's post in DB — any status
       const today = new Date().toISOString().split('T')[0]
       const todayPost = (postsData.posts ?? []).find((post: Record<string, unknown>) => {
         const dateStr = String(post.scheduled_for ?? '').split('T')[0]
-        return dateStr === today && post.status !== 'posted'
+        return dateStr === today
       })
 
       if (todayPost?.content) {
         setPost(todayPost.content as string)
+        // If already posted or approved, reflect that in UI
+        if (todayPost.status === 'posted' || todayPost.status === 'approved') {
+          setApproved(true)
+        }
         setLoading(false)
         return
       }
