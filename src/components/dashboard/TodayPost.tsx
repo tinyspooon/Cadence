@@ -97,6 +97,7 @@ Return ONLY the post text with no preamble.${companyNote}`
 
 export default function TodayPost({ userId }: { userId: string }) {
   const [post, setPost] = useState('')
+  const [postId, setPostId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [editMode, setEditMode] = useState(false)
   const [editContent, setEditContent] = useState('')
@@ -130,7 +131,7 @@ export default function TodayPost({ userId }: { userId: string }) {
 
       if (todayPost?.content) {
         setPost(todayPost.content as string)
-        // If already posted or approved, reflect that in UI
+        setPostId(todayPost.id as string)
         if (todayPost.status === 'posted' || todayPost.status === 'approved') {
           setApproved(true)
         }
@@ -179,11 +180,21 @@ export default function TodayPost({ userId }: { userId: string }) {
     const linkedinText = post.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n')
     window.open(`https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(linkedinText)}`, '_blank')
     setApproved(true); setCopied(true)
-    fetch('/api/posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: post, platform: 'linkedin', style: 'Story', status: 'posted' }),
-    }).catch(e => console.warn('Failed to save post:', e))
+    if (postId) {
+      // Update existing calendar post to posted
+      fetch('/api/posts', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: postId, status: 'posted', posted_at: new Date().toISOString() }),
+      }).catch(e => console.warn('Failed to update post:', e))
+    } else {
+      // No calendar post — create a new record
+      fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: post, platform: 'linkedin', style: 'Story', status: 'posted' }),
+      }).catch(e => console.warn('Failed to save post:', e))
+    }
   }
 
   if (approved) {
