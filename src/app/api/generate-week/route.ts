@@ -1,9 +1,9 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
-import Groq from 'groq-sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createUserClient } from '@/lib/supabase/server'
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 // 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun
 function getScheduledDates(activeDays: number[], daysAhead: number = 21): Date[] {
@@ -140,6 +140,8 @@ export async function POST(req: Request) {
   let topicIndex = 0
 
   const groqErrors: string[] = []
+  let totalInputTokens = 0
+  let totalOutputTokens = 0
 
   for (const date of scheduledDates) {
     for (let p = 0; p < postsPerDay; p++) {
@@ -148,14 +150,13 @@ export async function POST(req: Request) {
       topicIndex++
 
       try {
-        const completion = await groq.chat.completions.create({
-          model: 'llama-3.3-70b-versatile',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 400,
-          temperature: 0.85,
-        })
-
-        const raw = completion.choices[0]?.message?.content?.trim() ?? ''
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' })
+        const result = await model.generateContent(prompt)
+        const raw = result.response.text()
+        const usage = result.response.usageMetadata
+        totalInputTokens += usage?.promptTokenCount ?? 0
+        totalOutputTokens += usage?.candidatesTokenCount ?? 0
+        console.log(`[generate-week] ${date.toISOString().split('T')[0]} | in:${usage?.promptTokenCount} out:${usage?.candidatesTokenCount}`)
         let text = raw
           .replace(/\*\*(.*?)\*\*/g, '$1')
           .replace(/\*(.*?)\*/g, '$1')
@@ -206,5 +207,16 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ generated: savedPosts?.length ?? 0, posts: savedPosts })
+  // Cost estimate (Gemini 2.5 Flash: $0.30/1M input, $2.50/1M output)
+  const estimatedCostUSD = ((totalInputTokens / 1_000_000) * 0.30) + ((totalOutputTokens / 1_000_000) * 2.50)
+
+  return NextResponse.json({ 
+    generated: savedPosts?.length ?? 0,
+    tokenUsage: {
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      totalTokens: totalInputTokens + totalOutputTokens,
+      estimatedCostUSD: `$${estimatedCostUSD.toFixed(5)}`,
+    }
+  })
 }
