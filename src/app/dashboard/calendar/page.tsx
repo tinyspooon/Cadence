@@ -358,7 +358,13 @@ export default function CalendarPage() {
                       <div className="font-serif text-xl font-extrabold text-green-700">Post approved!</div>
                       <div className="text-xs text-green-600 mt-1">Text copied — paste into the platform and click Post</div>
                     </div>
-                    <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-sm leading-[1.8] whitespace-pre-wrap text-text">{modalPost.full}</div>
+                    <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-sm leading-[1.8] text-text">
+                      <div className="space-y-3">
+                        {modalPost.full.split('\n').map((line: string, i: number) => (
+                          line.trim() === '' ? null : <p key={i}>{line}</p>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 ) : editMode ? (
                   <textarea
