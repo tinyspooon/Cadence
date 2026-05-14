@@ -278,8 +278,10 @@ export default function QueuePage() {
                             className="w-full border border-accent rounded-xl p-3 text-sm leading-relaxed resize-y min-h-[120px] focus:outline-none focus:ring-2 focus:ring-accent/20 bg-white"
                             autoFocus />
                         ) : (
-                          <div className={`text-sm text-text leading-relaxed whitespace-pre-wrap relative ${!isExpanded ? 'max-h-[72px] overflow-hidden' : ''}`}>
-                            {post.full}
+                          <div className={`text-sm text-text leading-relaxed relative ${!isExpanded ? 'max-h-[72px] overflow-hidden' : ''}`}>
+                            {post.full.split('\n').map((line: string, i: number) => (
+                              <p key={i} className={line === '' ? 'mt-2' : 'mt-0'}>{line || '\u00A0'}</p>
+                            ))}
                             {!isExpanded && (
                               <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                             )}

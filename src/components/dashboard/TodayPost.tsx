@@ -214,7 +214,11 @@ export default function TodayPost({ userId }: { userId: string }) {
             className="w-full border border-accent rounded-xl p-3 text-sm leading-relaxed resize-y min-h-[140px] focus:outline-none focus:ring-2 focus:ring-accent/15"
             autoFocus />
         ) : (
-          <p className="text-[13px] leading-[1.8] text-text whitespace-pre-wrap">{post}</p>
+          <div className="text-[13px] leading-[1.8] text-text">
+            {post.split('\n').map((line, i) => (
+              <p key={i} className={line === '' ? 'mt-3' : 'mt-0'}>{line || '\u00A0'}</p>
+            ))}
+          </div>
         )}
       </div>
       <div className="flex gap-1.5 px-4 pb-4">
