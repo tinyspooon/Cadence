@@ -402,7 +402,13 @@ export default function CalendarPage() {
                     autoFocus
                   />
                 ) : (
-                  <p className="text-sm leading-[1.8] whitespace-pre-wrap text-text">{modalPost.full}</p>
+                  <div className="text-sm leading-[1.8] text-text">
+                    <div className="space-y-3">
+                      {modalPost.full.split('\n').map((line: string, i: number) => (
+                        line.trim() === '' ? null : <p key={i}>{line}</p>
+                      ))}
+                    </div>
+                  </div>
                 )
               ) : isOverdue(modal) ? (
                 <div className="text-center py-8">
