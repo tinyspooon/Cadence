@@ -78,7 +78,7 @@ LENGTH: ${words} words.${companyNote}
 Return ONLY the post text.`
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
     const result = await model.generateContent(prompt)
     const raw = result.response.text()
     const usage = result.response.usageMetadata
