@@ -109,14 +109,32 @@ export default function TodayPost({ userId }: { userId: string }) {
 
   async function loadData() {
     try {
-      const [pRes, vRes] = await Promise.all([fetch('/api/profile'), fetch('/api/voice')])
-      const [pData, vData] = await Promise.all([pRes.json(), vRes.json()])
+      const [pRes, vRes, postsRes] = await Promise.all([
+        fetch('/api/profile'),
+        fetch('/api/voice'),
+        fetch('/api/posts'),
+      ])
+      const [pData, vData, postsData] = await Promise.all([
+        pRes.json(), vRes.json(), postsRes.json()
+      ])
       const p = pData.profile ?? FALLBACK
       const v = vData.voice ?? {}
       setProfile(p); setVoice(v)
 
-      // Check if there's already a post for today — if so, show it instead of regenerating
+      // Check for today's scheduled post in DB first
       const today = new Date().toISOString().split('T')[0]
+      const todayPost = (postsData.posts ?? []).find((post: Record<string, unknown>) => {
+        const dateStr = String(post.scheduled_for ?? '').split('T')[0]
+        return dateStr === today && post.status !== 'posted'
+      })
+
+      if (todayPost?.content) {
+        setPost(todayPost.content as string)
+        setLoading(false)
+        return
+      }
+
+      // Fall back to session cache
       const sessionKey = `cadence_today_post_${today}`
       const cached = sessionStorage.getItem(sessionKey)
       if (cached) {
@@ -125,6 +143,7 @@ export default function TodayPost({ userId }: { userId: string }) {
         return
       }
 
+      // Nothing found — generate fresh
       await generatePost(p, v)
     } catch { await generatePost(FALLBACK, {}) }
   }
