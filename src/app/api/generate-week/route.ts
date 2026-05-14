@@ -150,7 +150,7 @@ export async function POST(req: Request) {
       topicIndex++
 
       try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' })
         const result = await model.generateContent(prompt)
         const raw = result.response.text()
         const usage = result.response.usageMetadata
@@ -207,8 +207,8 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Cost estimate (Gemini 2.5 Flash: $0.30/1M input, $2.50/1M output)
-  const estimatedCostUSD = ((totalInputTokens / 1_000_000) * 0.30) + ((totalOutputTokens / 1_000_000) * 2.50)
+  // Cost estimate (Gemini 2.5 Flash-Lite: $0.10/1M input, $0.40/1M output)
+  const estimatedCostUSD = ((totalInputTokens / 1_000_000) * 0.10) + ((totalOutputTokens / 1_000_000) * 0.40)
 
   return NextResponse.json({ 
     generated: savedPosts?.length ?? 0,
