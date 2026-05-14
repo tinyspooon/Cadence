@@ -279,9 +279,11 @@ export default function QueuePage() {
                             autoFocus />
                         ) : (
                           <div className={`text-sm text-text leading-relaxed relative ${!isExpanded ? 'max-h-[72px] overflow-hidden' : ''}`}>
-                            {post.full.split('\n').map((line: string, i: number) => (
-                              <p key={i} className={line === '' ? 'mt-2' : 'mt-0'}>{line || '\u00A0'}</p>
-                            ))}
+                            <div className="space-y-2.5">
+                              {post.full.split('\n').map((line: string, i: number) => (
+                                line.trim() === '' ? null : <p key={i}>{line}</p>
+                              ))}
+                            </div>
                             {!isExpanded && (
                               <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                             )}

@@ -114,6 +114,17 @@ export default function TodayPost({ userId }: { userId: string }) {
       const p = pData.profile ?? FALLBACK
       const v = vData.voice ?? {}
       setProfile(p); setVoice(v)
+
+      // Check if there's already a post for today — if so, show it instead of regenerating
+      const today = new Date().toISOString().split('T')[0]
+      const sessionKey = `cadence_today_post_${today}`
+      const cached = sessionStorage.getItem(sessionKey)
+      if (cached) {
+        setPost(cached)
+        setLoading(false)
+        return
+      }
+
       await generatePost(p, v)
     } catch { await generatePost(FALLBACK, {}) }
   }
@@ -128,13 +139,14 @@ export default function TodayPost({ userId }: { userId: string }) {
       // If short paragraphs is on, force each sentence onto its own line
       if (v.short_paragraphs !== false) {
         text = text
-          // Split on sentence endings followed by a space and capital letter
           .replace(/([.!?])\s+([A-Z])/g, '$1\n$2')
-          // Clean up any triple+ newlines
           .replace(/\n{3,}/g, '\n\n')
           .trim()
       }
       setPost(text)
+      // Cache for the day so revisiting dashboard doesn't regenerate
+      const today = new Date().toISOString().split('T')[0]
+      sessionStorage.setItem(`cadence_today_post_${today}`, text)
     } catch {
       setPost("Most sales teams are optimising for the wrong thing.\n\nThey track activity. Dials, emails, tasks logged.\n\nThe teams that consistently hit quota track outcomes. Conversations that moved. Decisions that got made.\n\nSame effort. Completely different results.")
     } finally { setLoading(false) }
@@ -214,9 +226,11 @@ export default function TodayPost({ userId }: { userId: string }) {
             className="w-full border border-accent rounded-xl p-3 text-sm leading-relaxed resize-y min-h-[140px] focus:outline-none focus:ring-2 focus:ring-accent/15"
             autoFocus />
         ) : (
-          <div className="text-[13px] leading-[1.8] text-text">
+          <div className="text-[13px] leading-[1.7] text-text space-y-3">
             {post.split('\n').map((line, i) => (
-              <p key={i} className={line === '' ? 'mt-3' : 'mt-0'}>{line || '\u00A0'}</p>
+              line.trim() === ''
+                ? null
+                : <p key={i}>{line}</p>
             ))}
           </div>
         )}
@@ -230,7 +244,11 @@ export default function TodayPost({ userId }: { userId: string }) {
           className={`flex-1 py-2.5 rounded-lg border text-xs font-bold transition-colors ${editMode ? 'bg-accent text-white border-accent' : 'bg-white text-text border-border2 hover:bg-surface'}`}>
           {editMode ? <span onClick={handleSaveEdit}>Save</span> : 'Edit'}
         </button>
-        <button onClick={() => generatePost(profile, voice)} disabled={loading}
+        <button onClick={() => {
+            const today = new Date().toISOString().split('T')[0]
+            sessionStorage.removeItem(`cadence_today_post_${today}`)
+            generatePost(profile, voice)
+          }} disabled={loading}
           className="flex-1 py-2.5 rounded-lg border border-accent/25 bg-accent-light text-accent text-xs font-bold hover:border-accent transition-colors disabled:opacity-50">
           {loading ? '...' : '↻ Regen'}
         </button>
