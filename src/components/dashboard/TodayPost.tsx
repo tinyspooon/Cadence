@@ -189,33 +189,18 @@ export default function TodayPost({ userId }: { userId: string }) {
   if (approved) {
     return (
       <div className="bg-white border-2 border-green-400 rounded-2xl p-5 mb-4">
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl flex-shrink-0">✅</div>
           <div>
-            <div className="font-bold text-green-800 text-sm">LinkedIn is open in a new tab</div>
-            <div className="text-xs text-green-700 mt-0.5">Your post text is copied — follow the steps below</div>
+            <div className="font-bold text-green-800 text-sm">Posted today</div>
+            <div className="text-xs text-green-700 mt-0.5">Come back tomorrow for your next post</div>
           </div>
         </div>
-        <div className="bg-green-50 rounded-xl p-3 mb-3 space-y-2">
-          <div className="flex items-center gap-2.5 text-sm text-green-800">
-            <span className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-            Switch to the LinkedIn tab
-          </div>
-          <div className="flex items-center gap-2.5 text-sm text-green-800">
-            <span className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
-            Click in the &quot;Start a post&quot; box
-          </div>
-          <div className="flex items-center gap-2.5 text-sm font-bold text-green-800">
-            <span className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
-            Press <kbd className="bg-white border border-green-300 rounded px-1.5 py-0.5 text-xs font-mono mx-1">⌘V</kbd> to paste, then click Post
+        <div className="bg-green-50 rounded-xl p-3 text-sm text-green-800 leading-relaxed">
+          <div className="space-y-2">
+            {post.split('\n').map((line, i) => line.trim() === '' ? null : <p key={i}>{line}</p>)}
           </div>
         </div>
-        <button
-          onClick={() => { navigator.clipboard?.writeText(post); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
-          className="w-full py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition-colors"
-        >
-          {copied ? '✓ Copied!' : '📋 Copy text again'}
-        </button>
       </div>
     )
   }
