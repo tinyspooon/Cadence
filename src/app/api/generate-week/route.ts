@@ -125,17 +125,24 @@ export async function POST(req: Request) {
   const voiceData = voice ?? {}
   const safeVoice: Record<string, unknown> = voiceData || {}
 
-  // Delete existing future scheduled posts
+  // Get existing scheduled post dates so we don't overwrite them
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  await supabase
+  const { data: existingPosts } = await supabase
     .from('posts')
-    .delete()
+    .select('scheduled_for')
     .eq('clerk_user_id', userId)
-    .eq('status', 'scheduled')
+    .in('status', ['scheduled', 'approved', 'draft'])
     .gte('scheduled_for', today.toISOString().split('T')[0])
 
+  const existingDates = new Set(
+    (existingPosts ?? []).map((p: Record<string, unknown>) => 
+      String(p.scheduled_for).split('T')[0]
+    )
+  )
+
   const scheduledDates = getScheduledDates(activeDays, 21)
+    .filter(d => !existingDates.has(d.toISOString().split('T')[0]))
   const postsToCreate: Record<string, unknown>[] = []
   let topicIndex = 0
 
