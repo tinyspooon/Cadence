@@ -130,11 +130,11 @@ export default function QueuePage() {
   }
 
   async function handleApprovePost(post: Post) {
+    const linkedinText = post.full.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n')
     const url = post.platform === 'x'
       ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.full.substring(0, 270))}`
-      : 'https://www.linkedin.com/feed/?shareActive=true'
+      : `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(linkedinText)}`
     window.open(url, '_blank')
-    navigator.clipboard?.writeText(post.full.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n')).catch(() => {})
     setCopied(post.id)
     setTimeout(() => setCopied(null), 2000)
 

@@ -172,12 +172,9 @@ export default function TodayPost({ userId }: { userId: string }) {
   }
 
   function handleApproveAndPost() {
-    // Must be synchronous to avoid popup blocker — open window immediately on click
-    const linkedInWindow = window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank')
-    // Copy to clipboard
-    navigator.clipboard?.writeText(post).catch(() => {})
+    const linkedinText = post.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n')
+    window.open(`https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(linkedinText)}`, '_blank')
     setApproved(true); setCopied(true)
-    // Save to DB async (non-blocking)
     fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
